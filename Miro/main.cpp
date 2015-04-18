@@ -89,7 +89,8 @@ makeBunnyScene()
     bunny->load("bunny.obj");
     
     // create all the triangles in the bunny mesh and add to the scene
-    for (int i = 0; i < bunny->numTris(); ++i)
+	
+	for (int i = 0; i < bunny->numTris(); ++i)
     {
         Triangle* t = new Triangle;
         t->setIndex(i);
