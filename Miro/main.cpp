@@ -78,15 +78,17 @@ makeBunnyScene()
 
     // create and place a point light source
     PointLight * light = new PointLight;
-    light->setPosition(Vector3(-3, 15, 3));
+    light->setPosition(Vector3(-3, 15, 3)); // default -3,15,3
     light->setColor(Vector3(1, 1, 1));
-    light->setWattage(500);
+    light->setWattage(2000);
     g_scene->addLight(light);
 
     Material* mat = new Lambert(Vector3(1.0f));
-
+	Material* mirror = new Lambert(Vector3(1.0f));
+	((Lambert*)mirror)->setKd(Vector3(0.0f));
+	((Lambert*)mirror)->setKs(Vector3(1.0f));
     TriangleMesh * bunny = new TriangleMesh;
-    bunny->load("bunny.obj");
+    bunny->load("teapot.obj");
     
     // create all the triangles in the bunny mesh and add to the scene
 	
@@ -95,7 +97,7 @@ makeBunnyScene()
         Triangle* t = new Triangle;
         t->setIndex(i);
         t->setMesh(bunny);
-        t->setMaterial(mat); 
+        t->setMaterial(mirror); 
         g_scene->addObject(t);
     }
     

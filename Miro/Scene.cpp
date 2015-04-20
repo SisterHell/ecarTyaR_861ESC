@@ -51,6 +51,8 @@ Scene::raytraceImage(Camera *cam, Image *img)
     {
         for (int i = 0; i < img->width(); ++i)
         {
+			Material::rayTraceDepth = 0;
+
             ray = cam->eyeRay(i, j, img->width(), img->height());
             if (trace(hitInfo, ray))
             {
@@ -71,5 +73,6 @@ Scene::raytraceImage(Camera *cam, Image *img)
 bool
 Scene::trace(HitInfo& minHit, const Ray& ray, float tMin, float tMax) const
 {
+	Material::rayTraceDepth++;
     return m_bvh.intersect(minHit, ray, tMin, tMax);
 }
