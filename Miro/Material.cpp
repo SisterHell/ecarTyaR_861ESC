@@ -1,6 +1,7 @@
 #include "Material.h"
 
-int Material::rayTraceDepth;
+int Material::reflectDepth;
+int Material::refractDepth;
 
 Material::Material()
 {

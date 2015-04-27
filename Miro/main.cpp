@@ -86,9 +86,11 @@ makeBunnyScene()
     Material* mat = new Lambert(Vector3(1.0f));
 	Material* mirror = new Lambert(Vector3(1.0f));
 	((Lambert*)mirror)->setKd(Vector3(0.0f));
-	((Lambert*)mirror)->setKs(Vector3(1.0f));
+	((Lambert*)mirror)->setKs(Vector3(0.0f));
+	((Lambert*)mirror)->setKt(Vector3(1.0f));
+
     TriangleMesh * bunny = new TriangleMesh;
-    bunny->load("teapot.obj");
+    bunny->load("Object/teapot.obj");
     
     // create all the triangles in the bunny mesh and add to the scene
 	
@@ -104,9 +106,9 @@ makeBunnyScene()
     // create the floor triangle
     TriangleMesh * floor = new TriangleMesh;
     floor->createSingleTriangle();
-    floor->setV1(Vector3(  0, 0,  10));
-    floor->setV2(Vector3( 10, 0, -10));
-    floor->setV3(Vector3(-10, 0, -10));
+    floor->setV1(Vector3(  0, 0,  50));
+    floor->setV2(Vector3( 50, 0, -50));
+    floor->setV3(Vector3(-50, 0, -50));
     floor->setN1(Vector3(0, 1, 0));
     floor->setN2(Vector3(0, 1, 0));
     floor->setN3(Vector3(0, 1, 0));

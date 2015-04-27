@@ -16,7 +16,8 @@ public:
     virtual Vector3 shade(const Ray& ray, const HitInfo& hit,
                           const Scene& scene) const;
 
-	static int rayTraceDepth; // this number avoid too many ray trace recursion
+	static int reflectDepth; // this number avoid too many ray trace recursion for refelction
+	static int refractDepth; // this number avoid too many ray trace recursion for refraction
 };
 
 

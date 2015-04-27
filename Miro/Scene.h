@@ -22,8 +22,15 @@ public:
     void openGL(Camera *cam);
 
     void raytraceImage(Camera *cam, Image *img);
-    bool trace(HitInfo& minHit, const Ray& ray,
+	
+	bool trace(HitInfo& minHit, const Ray& ray,
+		float tMin = 0.0f, float tMax = MIRO_TMAX) const;
+
+	bool trace(HitInfo& minHit, const Ray& ray, int& depth,
                float tMin = 0.0f, float tMax = MIRO_TMAX) const;
+
+	bool trace(HitInfo& minHit, const Ray& ray, int& depth, float n,
+		float tMin = 0.0f, float tMax = MIRO_TMAX) const;
 
 protected:
     Objects m_objects;
