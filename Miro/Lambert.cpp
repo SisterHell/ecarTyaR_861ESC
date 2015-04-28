@@ -63,6 +63,7 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene) const
 
 		//refraction ray tracing
 		if (m_kt != 0){
+			//std::cout << "refract!" << std::endl;
 			float n;
 
 			if (ray.n < 1.3){
@@ -71,10 +72,11 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene) const
 			else{
 				n = 1.33 / 1.00029;
 			}
-			wr = n * (ray.d - dot(ray.d, hit.N)*hit.N) - sqrtf(1 - pow(n, 2)*(1 - pow(dot(ray.d, hit.N), 2)))*hit.N;
+			//n = 1.00029 / 1.33;
+			wr = -1 * n * (viewDir - dot(viewDir, hit.N)*hit.N) - sqrtf(1 - pow(n, 2)*(1 - pow(dot(viewDir, hit.N), 2)))*hit.N;
 			wr.normalize();
 			HitInfo hitRefract;
-			Ray rayRefract(hit.P - hit.N*0.0005, wr);
+			Ray rayRefract(hit.P+wr*0.001, wr);
 			if (1 - pow(n, 2)*(1 - pow(dot(ray.d, hit.N), 2)) < 0){
 				return L;
 			}
@@ -86,20 +88,21 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene) const
 			}
 
 			
-			std::cout <<"n=" <<n << std::endl;
-			std::cout << "viewdir len = " << viewDir.length() << std::endl;
-			std::cout << "normal = " << hit.N.length() << std::endl;
-			std::cout << "result =" << 1 - pow(n, 2)*(1 - pow(dot(viewDir, hit.N), 2)) << std::endl;
-			std::cout << "ray.d = " << ray.d.x << "," << ray.d.y << "," << ray.d.z << std::endl;
-			std::cout << "viewdir = " << viewDir.x << "," << viewDir.y << "," << viewDir.z << std::endl;
-			std::cout << "wr = " << wr.x << "," << wr.y << "," << wr.z << std::endl;
-			std::cout << "hit point = " << hit.P.x << "," << hit.P.y << "," << hit.P.z << std::endl;
-			std::cout << "rayRefract = " << rayRefract.d.x << "," << rayRefract.d.y << "," << rayRefract.d.z << std::endl;
-			std::cout << std::endl;
+			//std::cout <<"n=" <<n << std::endl;
+			//std::cout << "viewdir len = " << viewDir.length() << std::endl;
+			//std::cout << "normal = " << hit.N.length() << std::endl;
+			//std::cout << "result =" << 1 - pow(n, 2)*(1 - pow(dot(viewDir, hit.N), 2)) << std::endl;
+			//std::cout << "ray.d = " << ray.d.x << "," << ray.d.y << "," << ray.d.z << std::endl;
+			//std::cout << "viewdir = " << viewDir.x << "," << viewDir.y << "," << viewDir.z << std::endl;
+			//std::cout << "wr = " << wr.x << "," << wr.y << "," << wr.z << std::endl;
+			//std::cout << "hit point = " << hit.P.x << "," << hit.P.y << "," << hit.P.z << std::endl;
+			//std::cout << "rayRefract = " << rayRefract.d.x << "," << rayRefract.d.y << "," << rayRefract.d.z << std::endl;
+			//std::cout << std::endl;
 		
-			std::cin.get();
+			//std::cin.get();
 			
 			if (scene.trace(hitRefract, rayRefract, Material::refractDepth)){
+				//std::cout << "hit" << std::endl;
 				L += m_kt * hitRefract.material->shade(rayRefract, hitRefract, scene);
 			}
 			//std::cout << std::endl;

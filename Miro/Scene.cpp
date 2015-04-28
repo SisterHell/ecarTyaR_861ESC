@@ -53,6 +53,7 @@ Scene::raytraceImage(Camera *cam, Image *img)
         {
 			Material::reflectDepth = 0;
 			Material::refractDepth = 0;
+
             ray = cam->eyeRay(i, j, img->width(), img->height());
 			ray.n = 1.00029;
 
@@ -85,8 +86,8 @@ Scene::trace(HitInfo& minHit, const Ray& ray, int& depth, float tMin, float tMax
 	depth++;
 	//std::cout << "depth = " << depth << std::endl;
 	if (depth > 5){
-		std::cout << "depth too many" << std::endl;
-		std::cin.get();
+		//std::cout << "depth too many" << std::endl;
+		//std::cin.get();
 	}
 	if (depth > MAX_DEPTH){
 		return false;

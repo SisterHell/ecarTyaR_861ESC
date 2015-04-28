@@ -89,8 +89,8 @@ makeBunnyScene()
 	((Lambert*)mat)->setKt(Vector3(0.0f));
 	Material* mirror = new Lambert(Vector3(1.0f));
 	((Lambert*)mirror)->setKd(Vector3(0.0f));
-	((Lambert*)mirror)->setKs(Vector3(1.0f));
-	((Lambert*)mirror)->setKt(Vector3(0.0f));
+	((Lambert*)mirror)->setKs(Vector3(0.5f));
+	((Lambert*)mirror)->setKt(Vector3(0.5f));
 
     TriangleMesh * bunny = new TriangleMesh;
     bunny->load("Object/teapot.obj");
@@ -108,7 +108,7 @@ makeBunnyScene()
 	*/
 	Sphere * sphere = new Sphere;
 	float x = 0;
-	float y = 5;
+	float y = 0.8;
 	float z = 0;
 	float r = 1;
 	sphere->setCenter(Vector3(x, y, z));
