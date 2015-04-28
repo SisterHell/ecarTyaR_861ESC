@@ -9,6 +9,8 @@ public:
     Vector3 o,      //!< Origin of ray
             d;      //!< Direction of ray
 
+	float n; // refraction index
+
     Ray() : o(), d(Vector3(0.0f,0.0f,1.0f))
     {
         // empty
@@ -18,6 +20,8 @@ public:
     {
         // empty
     }
+
+
 };
 
 
@@ -33,7 +37,7 @@ public:
     Vector3 P;                          //!< The hit point
     Vector3 N;                          //!< Shading normal vector
     const Material* material;           //!< Material of the intersected object
-
+	
     //! Default constructor.
     explicit HitInfo(float t = 0.0f,
                      const Vector3& P = Vector3(),

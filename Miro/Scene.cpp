@@ -53,8 +53,9 @@ Scene::raytraceImage(Camera *cam, Image *img)
         {
 			Material::reflectDepth = 0;
 			Material::refractDepth = 0;
-
             ray = cam->eyeRay(i, j, img->width(), img->height());
+			ray.n = 1.00029;
+
             if (trace(hitInfo, ray))
             {
                 shadeResult = hitInfo.material->shade(ray, hitInfo, *this);
@@ -82,16 +83,11 @@ bool
 Scene::trace(HitInfo& minHit, const Ray& ray, int& depth, float tMin, float tMax) const
 {
 	depth++;
-	if (depth > MAX_DEPTH){
-		return false;
+	//std::cout << "depth = " << depth << std::endl;
+	if (depth > 5){
+		std::cout << "depth too many" << std::endl;
+		std::cin.get();
 	}
-	return m_bvh.intersect(minHit, ray, tMin, tMax);
-}
-
-bool
-Scene::trace(HitInfo& minHit, const Ray& ray, int& depth, float n,float tMin, float tMax) const
-{
-	depth++;
 	if (depth > MAX_DEPTH){
 		return false;
 	}
