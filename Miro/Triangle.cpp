@@ -62,13 +62,13 @@ Triangle::intersect(HitInfo& result, const Ray& r,float tMin, float tMax)
 		
 		//std::cout << "t = " << t << std::endl;
 
-		if (t < tMin || t > tMax || t < 0.000000001){
+		if (t < tMin || t > tMax || t < 0.00001){
 			return false;
 		}
-		if (beta < -0.000000001 || beta > 1){
+		if (beta < -0.00001 || beta > 1){
 			return false;
 		}
-		if (gemma < -0.000000001 || gemma > 1){
+		if (gemma < -0.00001 || gemma > 1){
 			return false;
 		}
 		if (beta + gemma > 1){

@@ -3,7 +3,7 @@
 
 #include "Miro.h"
 #include "Vector3.h"
-#define MAX_DEPTH 8
+#define MAX_DEPTH 20
 
 class Material
 {

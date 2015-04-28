@@ -63,6 +63,9 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene) const
 			//std::cout << "refract!" << std::endl;
 			float n;
 			float hitAngle = dot(viewDir, hit.N);
+
+			// angle > 0 hit from outside
+			// angle < 0 hit from inside
 			if (hitAngle >= 0){
 				//std::cout << "hit from outside hit angle = " << hitAngle << std::endl;
 				n = 1.00029 / 1.33;
@@ -72,7 +75,8 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene) const
 				wr = -1 * n * (viewDir - dot(viewDir, hit.N)*hit.N) - sqrtf(1 - pow(n, 2)*(1 - pow(dot(viewDir, hit.N), 2)))*hit.N;
 				wr.normalize();
 				HitInfo hitRefract;
-				Ray rayRefract(hit.P - hit.N*0.00001, wr);
+				Ray rayRefract(hit.P + dot(wr, hit.N)*0.0001 * hit.N, wr);
+				//Ray rayRefract(hit.P - hit.N*0.00001, wr);
 				/*
 				std::cout << "hit.N = " << hit.N.x << "," << hit.N.y << "," << hit.N.z << std::endl;
 				std::cout << "ray.o = " << ray.o.x << "," << ray.o.y << "," << ray.o.z << std::endl;
@@ -93,10 +97,11 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene) const
 					return L;
 				}
 				wr = n * (ray.d - dot(ray.d, hit.N)*hit.N) + sqrtf(1 - pow(n, 2)*(1 - pow(dot(ray.d, hit.N), 2)))*hit.N;
-				//wr = -1 * n * (viewDir - dot(viewDir, hit.N)*hit.N) - sqrtf(1 - pow(n, 2)*(1 - pow(dot(viewDir, hit.N), 2)))*hit.N;
+				
 				wr.normalize();
 				HitInfo hitRefract;
-				Ray rayRefract(hit.P + hit.N*0.00001, wr);
+				Ray rayRefract(hit.P + dot(wr, hit.N) *0.0001* hit.N, wr);
+				
 				/*
 				std::cout << "hit.N = " << hit.N.x << "," << hit.N.y << "," << hit.N.z << std::endl;
 				std::cout << "ray.o = " << ray.o.x << "," << ray.o.y << "," << ray.o.z << std::endl;
@@ -110,20 +115,6 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene) const
 					L += m_kt * hitRefract.material->shade(rayRefract, hitRefract, scene);
 				}
 			}			
-			//std::cout <<"n=" <<n << std::endl;
-			//std::cout << "viewdir len = " << viewDir.length() << std::endl;
-			//std::cout << "normal = " << hit.N.length() << std::endl;
-			//std::cout << "result =" << 1 - pow(n, 2)*(1 - pow(dot(viewDir, hit.N), 2)) << std::endl;
-			//std::cout << "ray.d = " << ray.d.x << "," << ray.d.y << "," << ray.d.z << std::endl;
-			//std::cout << "viewdir = " << viewDir.x << "," << viewDir.y << "," << viewDir.z << std::endl;
-			//std::cout << "wr = " << wr.x << "," << wr.y << "," << wr.z << std::endl;
-			
-		
-			//std::cin.get();
-		
-			//std::cout << std::endl;
-			//std::cout << "refraction done\n" << std::endl;
-			//std::cin.get();
 		}
 		
     }
