@@ -71,7 +71,7 @@ makeBunnyScene()
     
     // set up the camera
     g_camera->setBGColor(Vector3(0.0f, 0.0f, 0.2f));
-    g_camera->setEye(Vector3(0, 0.1, 3)); //-2,3,5
+    g_camera->setEye(Vector3(0, 3, 3)); //-2,3,5
     g_camera->setLookAt(Vector3(0, 0, 0)); // -.5,1,0
     g_camera->setUp(Vector3(0, 1, 0));
     g_camera->setFOV(45);
@@ -89,14 +89,14 @@ makeBunnyScene()
 	((Lambert*)mat)->setKt(Vector3(0.0f));
 	Material* mirror = new Lambert(Vector3(1.0f));
 	((Lambert*)mirror)->setKd(Vector3(0.0f));
-	((Lambert*)mirror)->setKs(Vector3(0.5f));
-	((Lambert*)mirror)->setKt(Vector3(0.5f));
+	((Lambert*)mirror)->setKs(Vector3(0.0f));
+	((Lambert*)mirror)->setKt(Vector3(1.f));
 
     TriangleMesh * bunny = new TriangleMesh;
-    bunny->load("Object/teapot.obj");
+    bunny->load("Object/bunny_smooth.obj");
     
     // create all the triangles in the bunny mesh and add to the scene
-	/*
+	
 	for (int i = 0; i < bunny->numTris(); ++i)
     {
         Triangle* t = new Triangle;
@@ -105,23 +105,24 @@ makeBunnyScene()
         t->setMaterial(mirror); 
         g_scene->addObject(t);
     }
-	*/
+	
+	/*
 	Sphere * sphere = new Sphere;
 	float x = 0;
-	float y = 0.8;
+	float y = 1;
 	float z = 0;
 	float r = 1;
 	sphere->setCenter(Vector3(x, y, z));
 	sphere->setRadius(r);
 	sphere->setMaterial(mirror);
 	g_scene->addObject(sphere);
-
+	*/
     // create the floor triangle
     TriangleMesh * floor = new TriangleMesh;
     floor->createSingleTriangle();
-    floor->setV1(Vector3(  0, 0,  50));
-    floor->setV2(Vector3( 50, 0, -50));
-    floor->setV3(Vector3(-50, 0, -50));
+    floor->setV1(Vector3(  0, 0,  -10));
+    floor->setV2(Vector3( 2.5, 0, 5));
+    floor->setV3(Vector3(-2.5, 0, 5));
     floor->setN1(Vector3(0, 1, 0));
     floor->setN2(Vector3(0, 1, 0));
     floor->setN3(Vector3(0, 1, 0));
@@ -130,7 +131,7 @@ makeBunnyScene()
     t->setIndex(0);
     t->setMesh(floor);
     t->setMaterial(mat); 
-    g_scene->addObject(t);
+	g_scene->addObject(t);
     
     // let objects do pre-calculations if needed
     g_scene->preCalc();

@@ -47,7 +47,7 @@ Scene::raytraceImage(Camera *cam, Image *img)
     Vector3 shadeResult;
     
     // loop over all pixels in the image
-    for (int j = 0; j < img->height(); ++j)
+	for (int j = 0; j < img->height(); ++j)
     {
         for (int i = 0; i < img->width(); ++i)
         {
@@ -84,8 +84,9 @@ bool
 Scene::trace(HitInfo& minHit, const Ray& ray, int& depth, float tMin, float tMax) const
 {
 	depth++;
-	//std::cout << "depth = " << depth << std::endl;
-	if (depth > 5){
+
+	if (depth > 2){
+		//std::cout << "depth = " << depth << std::endl;
 		//std::cout << "depth too many" << std::endl;
 		//std::cin.get();
 	}

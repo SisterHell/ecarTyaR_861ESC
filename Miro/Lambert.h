@@ -21,10 +21,13 @@ public:
     void setKa(const Vector3 & ka) {m_ka = ka;}
 	void setKs(const Vector3 & ks) {m_ks = ks;}
 	void setKt(const Vector3 & kt) {m_kt = kt;}
+	void setRn(float rn) { m_rn = rn; }
     virtual void preCalc() {}
     
     virtual Vector3 shade(const Ray& ray, const HitInfo& hit,
                           const Scene& scene) const;
+	
+	float m_rn;		// material refraction index
 
 protected:
     Vector3 m_kd;	// constant for diffuse shading

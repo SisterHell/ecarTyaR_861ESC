@@ -46,16 +46,13 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene) const
 		float E = nDotL / falloff * pLight->wattage() / (4 * PI);
 
 		L += std::max(0.0f, E) * result;
-
+		Vector3 wr;
+		
 		// reflection ray tracing
-		Vector3 wr = 2 * dot(viewDir, hit.N) * hit.N + ray.d;
-		HitInfo hitReflect;
-		Ray rayReflect(hit.P + hit.N * 0.0001, wr);
-		//std::cout << "ray.d = " << ray.d.x << "," << ray.d.y << "," << ray.d.z << std::endl;
-		//std::cout << "wr = " << wr.x << "," << wr.y << "," << wr.z << std::endl;
-		//std::cout << "hit point = " << hit.P.x << "," << hit.P.y << "," << hit.P.z << std::endl;
-		//std::cin.get();
 		if (m_ks != 0){
+			wr = 2 * dot(viewDir, hit.N) * hit.N + ray.d;
+			HitInfo hitReflect;
+			Ray rayReflect(hit.P + hit.N * 0.0001, wr);
 			if (scene.trace(hitReflect, rayReflect, Material::reflectDepth)){
 				L += m_ks * hitReflect.material->shade(rayReflect, hitReflect, scene);
 			}
@@ -65,29 +62,54 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene) const
 		if (m_kt != 0){
 			//std::cout << "refract!" << std::endl;
 			float n;
-
-			if (ray.n < 1.3){
+			float hitAngle = dot(viewDir, hit.N);
+			if (hitAngle >= 0){
+				//std::cout << "hit from outside hit angle = " << hitAngle << std::endl;
 				n = 1.00029 / 1.33;
+				if (1 - pow(n, 2)*(1 - pow(dot(viewDir, hit.N), 2)) < 0){
+					return L;
+				}
+				wr = -1 * n * (viewDir - dot(viewDir, hit.N)*hit.N) - sqrtf(1 - pow(n, 2)*(1 - pow(dot(viewDir, hit.N), 2)))*hit.N;
+				wr.normalize();
+				HitInfo hitRefract;
+				Ray rayRefract(hit.P - hit.N*0.00001, wr);
+				/*
+				std::cout << "hit.N = " << hit.N.x << "," << hit.N.y << "," << hit.N.z << std::endl;
+				std::cout << "ray.o = " << ray.o.x << "," << ray.o.y << "," << ray.o.z << std::endl;
+				std::cout << "ray.d = " << ray.d.x << "," << ray.d.y << "," << ray.d.z << std::endl;
+				std::cout << "hit point = " << hit.P.x << "," << hit.P.y << "," << hit.P.z << std::endl;
+				std::cout << "rayRefract = " << rayRefract.d.x << "," << rayRefract.d.y << "," << rayRefract.d.z << std::endl;
+				std::cout << std::endl;
+				*/
+				if (scene.trace(hitRefract, rayRefract, Material::refractDepth)){
+					//std::cout << "hit" << std::endl;
+					L += m_kt * hitRefract.material->shade(rayRefract, hitRefract, scene);
+				}
 			}
 			else{
+				//std::cout << "hit from inside angle = " << hitAngle << std::endl;
 				n = 1.33 / 1.00029;
-			}
-			//n = 1.00029 / 1.33;
-			wr = -1 * n * (viewDir - dot(viewDir, hit.N)*hit.N) - sqrtf(1 - pow(n, 2)*(1 - pow(dot(viewDir, hit.N), 2)))*hit.N;
-			wr.normalize();
-			HitInfo hitRefract;
-			Ray rayRefract(hit.P+wr*0.001, wr);
-			if (1 - pow(n, 2)*(1 - pow(dot(ray.d, hit.N), 2)) < 0){
-				return L;
-			}
-			if (ray.n < 1.3){
-				rayRefract.n = 1.33;
-			}
-			else{
-				rayRefract.n = 1.00029;
-			}
-
-			
+				if (1 - pow(n, 2)*(1 - pow(dot(ray.d, hit.N), 2)) < 0){
+					return L;
+				}
+				wr = n * (ray.d - dot(ray.d, hit.N)*hit.N) + sqrtf(1 - pow(n, 2)*(1 - pow(dot(ray.d, hit.N), 2)))*hit.N;
+				//wr = -1 * n * (viewDir - dot(viewDir, hit.N)*hit.N) - sqrtf(1 - pow(n, 2)*(1 - pow(dot(viewDir, hit.N), 2)))*hit.N;
+				wr.normalize();
+				HitInfo hitRefract;
+				Ray rayRefract(hit.P + hit.N*0.00001, wr);
+				/*
+				std::cout << "hit.N = " << hit.N.x << "," << hit.N.y << "," << hit.N.z << std::endl;
+				std::cout << "ray.o = " << ray.o.x << "," << ray.o.y << "," << ray.o.z << std::endl;
+				std::cout << "ray.d = " << ray.d.x << "," << ray.d.y << "," << ray.d.z << std::endl;
+				std::cout << "hit point = " << hit.P.x << "," << hit.P.y << "," << hit.P.z << std::endl;
+				std::cout << "rayRefract = " << rayRefract.d.x << "," << rayRefract.d.y << "," << rayRefract.d.z << std::endl;
+				std::cout << std::endl;
+				*/
+				if (scene.trace(hitRefract, rayRefract, Material::refractDepth)){
+					//std::cout << "hit" << std::endl;
+					L += m_kt * hitRefract.material->shade(rayRefract, hitRefract, scene);
+				}
+			}			
 			//std::cout <<"n=" <<n << std::endl;
 			//std::cout << "viewdir len = " << viewDir.length() << std::endl;
 			//std::cout << "normal = " << hit.N.length() << std::endl;
@@ -95,16 +117,10 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene) const
 			//std::cout << "ray.d = " << ray.d.x << "," << ray.d.y << "," << ray.d.z << std::endl;
 			//std::cout << "viewdir = " << viewDir.x << "," << viewDir.y << "," << viewDir.z << std::endl;
 			//std::cout << "wr = " << wr.x << "," << wr.y << "," << wr.z << std::endl;
-			//std::cout << "hit point = " << hit.P.x << "," << hit.P.y << "," << hit.P.z << std::endl;
-			//std::cout << "rayRefract = " << rayRefract.d.x << "," << rayRefract.d.y << "," << rayRefract.d.z << std::endl;
-			//std::cout << std::endl;
+			
 		
 			//std::cin.get();
-			
-			if (scene.trace(hitRefract, rayRefract, Material::refractDepth)){
-				//std::cout << "hit" << std::endl;
-				L += m_kt * hitRefract.material->shade(rayRefract, hitRefract, scene);
-			}
+		
 			//std::cout << std::endl;
 			//std::cout << "refraction done\n" << std::endl;
 			//std::cin.get();
