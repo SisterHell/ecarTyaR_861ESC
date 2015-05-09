@@ -61,7 +61,6 @@ Triangle::intersect(HitInfo& result, const Ray& r,float tMin, float tMax)
 		gemma = dot(cross(v1 - v0, r.o - v0), r.d) / dot(n, r.d);
 		
 		//std::cout << "t = " << t << std::endl;
-
 		if (t < tMin || t > tMax || t < epsilon){
 			return false;
 		}

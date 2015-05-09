@@ -47,14 +47,15 @@ Scene::raytraceImage(Camera *cam, Image *img)
     Vector3 shadeResult;
     
     // loop over all pixels in the image
-    for (int j = 0; j < img->height(); ++j)
+	for (int j = 0; j < img->height(); ++j)
     {
         for (int i = 0; i < img->width(); ++i)
         {
 			Material::reflectDepth = 0;
 			Material::refractDepth = 0;
+
             ray = cam->eyeRay(i, j, img->width(), img->height());
-			ray.n = 1.00029;
+			ray.n = 1;
 
             if (trace(hitInfo, ray))
             {
@@ -84,7 +85,6 @@ bool
 Scene::trace(HitInfo& minHit, const Ray& ray, int& depth, float tMin, float tMax) const
 {
 	depth++;
-	//std::cout << "depth = " << depth << std::endl;
 	if (depth > MAX_DEPTH){
 		return false;
 	}

@@ -90,8 +90,8 @@ makeBunnyScene()
 	((Lambert*)mat)->setKt(Vector3(0.0f));
 	Material* mirror = new Lambert(Vector3(1.0f));
 	((Lambert*)mirror)->setKd(Vector3(0.0f));
-	((Lambert*)mirror)->setKs(Vector3(1.0f));
-	((Lambert*)mirror)->setKt(Vector3(0.0f));
+	((Lambert*)mirror)->setKs(Vector3(0.0f));
+	((Lambert*)mirror)->setKt(Vector3(1.f));
 
 	Material* red = new Lambert(Vector3(1.0f,0.0f,0.0f));
 	((Lambert*)red)->setKd(Vector3((139.0/255.0), (69.0/255.0), (19.0/255.0)));
@@ -100,10 +100,9 @@ makeBunnyScene()
 	((Lambert*)red)->setNoise(true);
 
     TriangleMesh * bunny = new TriangleMesh;
-    bunny->load("Object/teapot.obj");
+    bunny->load("Object/sphere_01.obj");
     
     // create all the triangles in the bunny mesh and add to the scene
-	
 	
 	for (int i = 0; i < bunny->numTris(); ++i)
     {
@@ -113,13 +112,12 @@ makeBunnyScene()
 		t->setMaterial(red);
         g_scene->addObject(t);
     }
-
     // create the floor triangle
     TriangleMesh * floor = new TriangleMesh;
     floor->createSingleTriangle();
-    floor->setV1(Vector3(  0, 0,  50));
-    floor->setV2(Vector3( 50, 0, -50));
-    floor->setV3(Vector3(-50, 0, -50));
+    floor->setV1(Vector3(  0, -1,  -10));
+    floor->setV2(Vector3( 2.5, -1, 5));
+    floor->setV3(Vector3(-2.5, -1, 5));
     floor->setN1(Vector3(0, 1, 0));
     floor->setN2(Vector3(0, 1, 0));
     floor->setN3(Vector3(0, 1, 0));
@@ -128,7 +126,7 @@ makeBunnyScene()
     t->setIndex(0);
     t->setMesh(floor);
     t->setMaterial(mat); 
-    g_scene->addObject(t);
+	g_scene->addObject(t);
     
     // let objects do pre-calculations if needed
     g_scene->preCalc();
