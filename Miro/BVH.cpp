@@ -7,8 +7,18 @@ BVH::build(Objects * objs)
 {
     // construct the bounding volume hierarchy
     m_objects = objs;
+	root->obj_arr = objs;
+	
 }
-
+	
+void BVH::setRoot(Vector3 min, Vector3 max)
+{
+	root = new BSP_node();
+	root->box.max = max;
+	root->box.min = min;
+	std::cout << "root max = " << root->box.max.x << "," << root->box.max.y << "," << root->box.max.z << std::endl;
+	std::cout << "root min = " << root->box.min.x << "," << root->box.min.y << "," << root->box.min.z << std::endl;
+}
 
 bool
 BVH::intersect(HitInfo& minHit, const Ray& ray, float tMin, float tMax) const

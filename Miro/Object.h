@@ -20,6 +20,9 @@ public:
     virtual bool intersect(HitInfo& result, const Ray& ray,
                            float tMin = 0.0f, float tMax = MIRO_TMAX) = 0;
 
+	Vector3 min, max; // min and max point
+	float s_area; // surface area
+
 protected:
     const Material* m_material;
 };

@@ -15,6 +15,24 @@ Triangle::~Triangle()
 
 }
 
+void Triangle::preCalc()
+{
+	TriangleMesh::TupleI3 ti3 = m_mesh->vIndices()[m_index];
+	const Vector3 & v0 = m_mesh->vertices()[ti3.x]; //vertex a of triangle
+	const Vector3 & v1 = m_mesh->vertices()[ti3.y]; //vertex b of triangle
+	const Vector3 & v2 = m_mesh->vertices()[ti3.z]; //vertex c of triangle
+	float xmin = fmin(fmin(v0.x, v1.x), v2.x);
+	float ymin = fmin(fmin(v0.y, v1.y), v2.y);
+	float zmin = fmin(fmin(v0.z, v1.z), v2.z);
+	float xmax = fmax(fmax(v0.x, v1.x), v2.x);
+	float ymax = fmax(fmax(v0.y, v1.y), v2.y);
+	float zmax = fmax(fmax(v0.z, v1.z), v2.z);
+
+	//set min , max ,and surface area
+	min.set(xmin, ymin, zmin);
+	max.set(xmax, ymax, zmax);
+	s_area = 0.5*cross((v1 - v0), (v2 - v0)).length(); // surface area of this triangle
+}
 
 void
 Triangle::renderGL()
@@ -42,9 +60,9 @@ Triangle::intersect(HitInfo& result, const Ray& r,float tMin, float tMax)
 	const Vector3 & v2 = m_mesh->vertices()[ti3.z]; //vertex c of triangle
 
 	TriangleMesh::TupleI3 tn3 = m_mesh->nIndices()[m_index];
-	const Vector3 & n0 = m_mesh->normals()[tn3.x]; //vertex a of triangle
-	const Vector3 & n1 = m_mesh->normals()[tn3.y]; //vertex b of triangle
-	const Vector3 & n2 = m_mesh->normals()[tn3.z]; //vertex c of triangle	
+	const Vector3 & n0 = m_mesh->normals()[tn3.x]; //normal a of triangle
+	const Vector3 & n1 = m_mesh->normals()[tn3.y]; //normal b of triangle
+	const Vector3 & n2 = m_mesh->normals()[tn3.z]; //normal c of triangle	
 
 	Vector3 n = cross(v1 - v0, v2 - v0);
 	float t = -1;

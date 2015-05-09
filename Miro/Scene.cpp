@@ -6,6 +6,11 @@
 
 Scene * g_scene = 0;
 
+void Scene::addObject(Object* pObj)
+{
+	m_objects.push_back(pObj); 
+}
+
 void
 Scene::openGL(Camera *cam)
 {
@@ -26,8 +31,26 @@ Scene::preCalc()
     Objects::iterator it;
     for (it = m_objects.begin(); it != m_objects.end(); it++)
     {
-        Object* pObject = *it;
-        pObject->preCalc();
+        Object* pObj = *it;
+        pObj->preCalc();
+		if (pObj->min.x < min.x){
+			min.x = pObj->min.x;
+		}
+		if (pObj->min.y < min.y){
+			min.y = pObj->min.y;
+		}
+		if (pObj->min.z < min.z){
+			min.z = pObj->min.z;
+		}
+		if (pObj->max.x > max.x){
+			max.x = pObj->max.x;
+		}
+		if (pObj->max.y > max.y){
+			max.y = pObj->max.y;
+		}
+		if (pObj->max.z > max.z){
+			max.z = pObj->max.z;
+		}
     }
     Lights::iterator lit;
     for (lit = m_lights.begin(); lit != m_lights.end(); lit++)
@@ -36,6 +59,7 @@ Scene::preCalc()
         pLight->preCalc();
     }
 
+	m_bvh.setRoot(min,max);
     m_bvh.build(&m_objects);
 }
 

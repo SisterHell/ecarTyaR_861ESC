@@ -12,7 +12,12 @@ class Image;
 class Scene
 {
 public:
-    void addObject(Object* pObj)        {m_objects.push_back(pObj);}
+	Scene() 
+	{ 
+		min.set(1000000, 1000000, 1000000); 
+		max.set(-1000000, -1000000, -1000000);
+	}
+	void addObject(Object* pObj);        
     const Objects* objects() const      {return &m_objects;}
 
     void addLight(PointLight* pObj)     {m_lights.push_back(pObj);}
@@ -33,6 +38,7 @@ protected:
     Objects m_objects;
     BVH m_bvh;
     Lights m_lights;
+	Vector3 min,max;
 };
 
 extern Scene * g_scene;
