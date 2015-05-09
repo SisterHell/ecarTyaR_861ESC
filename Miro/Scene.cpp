@@ -60,6 +60,7 @@ Scene::raytraceImage(Camera *cam, Image *img)
             if (trace(hitInfo, ray))
             {
                 shadeResult = hitInfo.material->shade(ray, hitInfo, *this);
+				
                 img->setPixel(i, j, shadeResult);
             }
         }
@@ -84,12 +85,6 @@ bool
 Scene::trace(HitInfo& minHit, const Ray& ray, int& depth, float tMin, float tMax) const
 {
 	depth++;
-
-	if (depth > 5){
-		//std::cout << "depth = " << depth << std::endl;
-		//std::cout << "depth too many" << std::endl;
-		//std::cin.get();
-	}
 	if (depth > MAX_DEPTH){
 		return false;
 	}
