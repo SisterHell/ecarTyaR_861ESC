@@ -66,16 +66,28 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene) const
 
 			// angle > 0 hit from outside
 			// angle < 0 hit from inside
-			if (hitAngle >= 0){
+			if (hitAngle > 0){
 				//std::cout << "hit from outside hit angle = " << hitAngle << std::endl;
 				n = 1.00029 / 1.33;
 				if (1 - pow(n, 2)*(1 - pow(dot(viewDir, hit.N), 2)) < 0){
 					return L;
 				}
-				wr = -1 * n * (viewDir - dot(viewDir, hit.N)*hit.N) - sqrtf(1 - pow(n, 2)*(1 - pow(dot(viewDir, hit.N), 2)))*hit.N;
+				wr =  -1 * n * (viewDir - dot(viewDir, hit.N)*hit.N) - sqrtf(1 - pow(n, 2)*(1 - pow(dot(viewDir, hit.N), 2)))*hit.N;
+				//wr = n * (ray.d - dot(ray.d, hit.N)*hit.N) + sqrtf(1 - pow(n, 2)*(1 - pow(dot(ray.d, hit.N), 2)))*hit.N;
+				//wr = wr*-1;
 				wr.normalize();
 				HitInfo hitRefract;
-				Ray rayRefract(hit.P + dot(wr, hit.N)*0.0001 * hit.N, wr);
+				Ray rayRefract;
+				rayRefract.d = wr;
+				rayRefract.o = hit.P + 0.0001*wr;
+				/*
+				if (dot(wr, hit.N) > 0){
+					rayRefract.o = hit.P + 0.00001* hit.N;
+				}
+				else{
+					rayRefract.o = hit.P - 0.00001* hit.N;
+				}
+				*/
 				//Ray rayRefract(hit.P - hit.N*0.00001, wr);
 				/*
 				std::cout << "hit.N = " << hit.N.x << "," << hit.N.y << "," << hit.N.z << std::endl;
@@ -96,12 +108,24 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene) const
 				if (1 - pow(n, 2)*(1 - pow(dot(ray.d, hit.N), 2)) < 0){
 					return L;
 				}
-				wr = n * (ray.d - dot(ray.d, hit.N)*hit.N) + sqrtf(1 - pow(n, 2)*(1 - pow(dot(ray.d, hit.N), 2)))*hit.N;
-				
+				Vector3 tn = hit.N;
+				tn.negate();
+				//wr = n * (ray.d - dot(ray.d, hit.N)*hit.N) + sqrtf(1 - pow(n, 2)*(1 - pow(dot(ray.d, hit.N), 2)))*hit.N;
+				wr = -1 * n * (viewDir - dot(viewDir, tn)*tn) - sqrtf(1 - pow(n, 2)*(1 - pow(dot(viewDir, tn), 2)))*tn;
+				//wr = -1 * wr;
 				wr.normalize();
 				HitInfo hitRefract;
-				Ray rayRefract(hit.P + dot(wr, hit.N) *0.0001* hit.N, wr);
-				
+				Ray rayRefract;
+				rayRefract.d = wr;
+				rayRefract.o = hit.P + 0.0001*wr;
+				/*
+				if (dot(wr, hit.N) > 0){
+					rayRefract.o = hit.P + 0.00001* hit.N;
+				}
+				else{
+					rayRefract.o = hit.P - 0.00001* hit.N;
+				}
+				*/
 				/*
 				std::cout << "hit.N = " << hit.N.x << "," << hit.N.y << "," << hit.N.z << std::endl;
 				std::cout << "ray.o = " << ray.o.x << "," << ray.o.y << "," << ray.o.z << std::endl;

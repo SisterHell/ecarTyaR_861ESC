@@ -93,7 +93,7 @@ makeBunnyScene()
 	((Lambert*)mirror)->setKt(Vector3(1.f));
 
     TriangleMesh * bunny = new TriangleMesh;
-    bunny->load("Object/sphere_01.obj");
+    bunny->load("Object/teapot.obj");
     
     // create all the triangles in the bunny mesh and add to the scene
 	
