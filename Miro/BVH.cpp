@@ -8,9 +8,15 @@ BVH::build(Objects * objs)
     // construct the bounding volume hierarchy
     m_objects = objs;
 	root->obj_arr = objs;
-	
+	subdivide(root);
 }
 	
+void BVH::subdivide(BSP_node* node)
+{
+
+
+}
+
 void BVH::setRoot(Vector3 min, Vector3 max)
 {
 	root = new BSP_node();

@@ -18,11 +18,9 @@ public:
 		Objects * obj_arr;
 		int axis;
 		float p_pos;
-		void subdivide(BSP_node* node){
-			
-		}
 	};
 
+	void subdivide(BSP_node* node);
 	void setRoot(Vector3, Vector3);
     void build(Objects * objs);
 
