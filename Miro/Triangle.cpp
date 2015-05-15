@@ -28,9 +28,12 @@ void Triangle::preCalc()
 	float ymax = fmax(fmax(v0.y, v1.y), v2.y);
 	float zmax = fmax(fmax(v0.z, v1.z), v2.z);
 
-	//set min , max ,and surface area
+	//set min , max ,center point and surface area
 	min.set(xmin, ymin, zmin);
 	max.set(xmax, ymax, zmax);
+	center.x = (xmin + xmax) / 2;
+	center.y = (ymin + ymax) / 2;
+	center.z = (zmin + zmax) / 2;
 	s_area = 0.5*cross((v1 - v0), (v2 - v0)).length(); // surface area of this triangle
 }
 

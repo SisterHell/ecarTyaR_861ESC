@@ -3,6 +3,7 @@
 
 #include "Miro.h"
 #include "Object.h"
+#include <algorithm>
 
 class BVH
 {
@@ -20,7 +21,7 @@ public:
 		float p_pos;
 	};
 
-	void subdivide(BSP_node* node);
+	void subdivide(BSP_node* node, Objects * objs);
 	void setRoot(Vector3, Vector3);
     void build(Objects * objs);
 
@@ -28,6 +29,11 @@ public:
                    float tMin = 0.0f, float tMax = MIRO_TMAX) const;
 
 	BSP_node* root;
+	static bool xcomp(Object*, Object*);
+	static bool ycomp(Object*, Object*);
+	static bool zcomp(Object*, Object*);
+
+	static int box_num;
 protected:
     Objects * m_objects;
 };
