@@ -816,11 +816,11 @@ main(int argc, char*argv[])
     //makeSpiralScene();
 	//makeLorenzScene();
 	//makeBunnyScene();
-	makeTeapotScene();
+	//makeTeapotScene();
 	//makeSphereScene();
 	//reflectionScene();
 	//reflectionScene2();
-	//reflectionScene3();
+	reflectionScene3();
 	//glassBallsScene();
 	//refractionScene();
     MiroWindow miro(&argc, argv);

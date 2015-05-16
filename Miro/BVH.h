@@ -24,16 +24,21 @@ public:
 	void subdivide(BSP_node* node, Objects * objs);
 	void setRoot(Vector3, Vector3);
     void build(Objects * objs);
+	bool traverse(BSP_node* node,HitInfo& result, const Ray& ray,
+		float tMin = 0.0f, float tMax = MIRO_TMAX) const;
 
     bool intersect(HitInfo& result, const Ray& ray,
                    float tMin = 0.0f, float tMax = MIRO_TMAX) const;
 
+	bool box_intersect(const Ray& ray,BSP_node* node) const;
 	BSP_node* root;
+	
 	static bool xcomp(Object*, Object*);
 	static bool ycomp(Object*, Object*);
 	static bool zcomp(Object*, Object*);
 
 	static int box_num;
+	static int tri_num;
 protected:
     Objects * m_objects;
 };

@@ -10,8 +10,8 @@ public:
     Sphere();
     virtual ~Sphere();
 
-    void setCenter(const Vector3& v)    {m_center = v;}
-    void setRadius(const float f)       {m_radius = f;}
+	void setCenter(const Vector3& v)    { m_center = v; Object::center = v;}
+	void setRadius(const float f)       { m_radius = f; min.set(m_center.x - f, m_center.y - f, m_center.z - f); max.set(m_center.x + f, m_center.y + f, m_center.z + f); }
 
     const Vector3& center() const       {return m_center;}
     float radius() const                {return m_radius;}
