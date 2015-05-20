@@ -13,6 +13,8 @@
 #include "MiroWindow.h"
 #include "Worley.h"
 
+#include "assignment2.h"
+
 void
 makeSpiralScene()
 {
@@ -131,7 +133,7 @@ makeBunnyScene()
     // let objects do pre-calculations if needed
     g_scene->preCalc();
 }*/
-
+/*
 void
 makeTeapotScene(){
 	g_camera = new Camera;
@@ -196,7 +198,7 @@ makeTeapotScene(){
 
 	// let objects do pre-calculations if needed
 	g_scene->preCalc();
-}
+}*/
 
 void
 refractionScene(){
@@ -820,9 +822,13 @@ main(int argc, char*argv[])
 	//makeSphereScene();
 	//reflectionScene();
 	//reflectionScene2();
-	reflectionScene3();
+	//reflectionScene3();
 	//glassBallsScene();
 	//refractionScene();
+	//makeTeapotScene();
+	//makeBunny1Scene();
+	//makeBunny20Scene();
+	makeSponzaScene();
     MiroWindow miro(&argc, argv);
     miro.mainLoop();
 

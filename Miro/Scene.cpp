@@ -3,6 +3,8 @@
 #include "Camera.h"
 #include "Image.h"
 #include "Console.h"
+#include <time.h>
+
 
 Scene * g_scene = 0;
 
@@ -66,11 +68,15 @@ Scene::preCalc()
 void
 Scene::raytraceImage(Camera *cam, Image *img)
 {
+	clock_t start_time, end_time;
+
     Ray ray;
     HitInfo hitInfo;
     Vector3 shadeResult;
-    
+	m_bvh.ray_box_intersection = 0;
+	m_bvh.ray_tri_intersection = 0;
     // loop over all pixels in the image
+	start_time = clock();
 	for (int j = 0; j < img->height(); ++j)
     {
         for (int i = 0; i < img->width(); ++i)
@@ -84,7 +90,6 @@ Scene::raytraceImage(Camera *cam, Image *img)
             if (trace(hitInfo, ray))
             {
                 shadeResult = hitInfo.material->shade(ray, hitInfo, *this);
-				
                 img->setPixel(i, j, shadeResult);
             }
         }
@@ -93,8 +98,12 @@ Scene::raytraceImage(Camera *cam, Image *img)
         printf("Rendering Progress: %.3f%%\r", j/float(img->height())*100.0f);
         fflush(stdout);
     }
+	printf("Rendering Progress: 100.000%\n");
+	end_time = clock();
+	std::cout << "trace time : " << ((double)(end_time - start_time)) / CLOCKS_PER_SEC << "\n";
     
-    printf("Rendering Progress: 100.000%\n");
+	std::cout << "ray_box_intersection: " << m_bvh.ray_box_intersection << std::endl;
+	std::cout << "ray_tri_intersection: " << m_bvh.ray_tri_intersection << std::endl;
     debug("done Raytracing!\n");
 }
 

@@ -2,9 +2,11 @@
 
 int Material::reflectDepth;
 int Material::refractDepth;
+bool shadowOn = true;
 
 Material::Material()
 {
+
 }
 
 Material::~Material()

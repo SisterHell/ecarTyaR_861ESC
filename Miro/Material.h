@@ -5,6 +5,8 @@
 #include "Vector3.h"
 #define MAX_DEPTH 7
 
+extern bool shadowOn;
+
 class Material
 {
 public:

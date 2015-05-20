@@ -38,4 +38,6 @@ extern Camera* g_camera;
 extern Scene* g_scene;
 extern Image* g_image;
 
+extern bool shadowOn;
+
 #endif

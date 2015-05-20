@@ -39,6 +39,9 @@ public:
 
 	static int box_num;
 	static int tri_num;
+	static int leaf_num;
+	static int ray_box_intersection;
+	static int ray_tri_intersection;
 protected:
     Objects * m_objects;
 };

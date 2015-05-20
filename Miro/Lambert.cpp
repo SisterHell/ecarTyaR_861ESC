@@ -69,14 +69,16 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene) const
 		Vector3 rayToLight = pLight->position() - hit.P;
 		float distToLight = rayToLight.length();
 		rayToLight = rayToLight.normalize();
-		HitInfo shadowInfo;
-		Ray shadowRay(hit.P + rayToLight*epsilon, rayToLight);
-		if (scene.trace(shadowInfo, shadowRay)){
-			float dist = (shadowInfo.P - hit.P).length();
-			if (dist < distToLight){
-				isShadow = true;
-				//std::cout << "distance to object: " << dist << std::endl;
-				//std::cout << "distance to light: " << distToLight << std::endl;
+		if (shadowOn){
+			HitInfo shadowInfo;
+			Ray shadowRay(hit.P + rayToLight*epsilon, rayToLight);
+			if (scene.trace(shadowInfo, shadowRay)){
+				float dist = (shadowInfo.P - hit.P).length();
+				if (dist < distToLight){
+					isShadow = true;
+					//std::cout << "distance to object: " << dist << std::endl;
+					//std::cout << "distance to light: " << distToLight << std::endl;
+				}
 			}
 		}
 
@@ -229,7 +231,7 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene) const
     // add the ambient component
     L += m_ka;
 
-	if (isShadow){
+	if (isShadow && shadowOn){
 		//std::cout << "is In Shadow" << std::endl;
 		return 0.7 * L;
 	}

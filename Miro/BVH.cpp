@@ -2,13 +2,21 @@
 #include "Ray.h"
 #include "Console.h"
 #include <functional>
+#include <stdio.h>
+#include <time.h>
 
 int BVH::box_num = 0;
 int BVH::tri_num = 0;
+int BVH::leaf_num = 0;
+int BVH::ray_box_intersection = 0;
+int BVH::ray_tri_intersection = 0;
 
 void
 BVH::build(Objects * objs)
 {
+	clock_t start_time, end_time;
+
+	start_time = clock();
     // construct the bounding volume hierarchy
     m_objects = objs;
 	root->obj_arr = 0;
@@ -17,22 +25,127 @@ BVH::build(Objects * objs)
 
 	std::cout << "box number = " << box_num << std::endl;
 	std::cout << "tri number = " << tri_num << std::endl;
+	std::cout << "leaf number = " << leaf_num << std::endl;
+
+	end_time = clock();
+	std::cout << "build time : " << ((double)(end_time - start_time)) / CLOCKS_PER_SEC << "\n";
 }
 	
 void BVH::subdivide(BSP_node* node, Objects * objs)
 {
+	clock_t start_time, end_time;
+
 	Objects * left_objs = new Objects();
 	Objects * right_objs = new Objects();
 	node->obj_arr = NULL;
 	int axis = 0;  // 012 xyz
 	int pos = -1;
 	float m_cost = 100000000;
-	float left_area = 0;
-	float right_area = 0;
+	double left_area = 0;
+	double right_area = 0;
+	double total_area = 0;
+	double size = objs->size();
 	float ci = 0.8;
 	float ct = 0.2;
+	
+	double mean[3] = { 0.0, 0.0, 0.0 };
+	double variance[3] = { 0.0, 0.0, 0.0 };
+	for (int i = 0; i < size; i++){
+		Vector3 p = objs->at(i)->center;
+		mean[0] += p.x;
+		mean[1] += p.y;
+		mean[2] += p.z;
+	}
+	mean[0] /= size;
+	mean[1] /= size;
+	mean[2] /= size;
+	for (int i = 0; i < size; i++){
+		total_area += objs->at(i)->s_area;
+		Vector3 p = objs->at(i)->center;
+		double temp = p.x - mean[0];
+		variance[0] += temp*temp;
+		temp = p.y - mean[1];
+		variance[1] += temp*temp;
+		temp = p.z - mean[2];
+		variance[2] += temp*temp;
+	}
+	variance[0] = variance[0] / size;
+	variance[1] = variance[1] / size;
+	variance[2] = variance[2] / size;
+
+	if (variance[0] > variance[1] && variance[0] > variance[2]){
+		axis = 0;
+	}
+	else if (variance[1] > variance[0] && variance[1] > variance[2]){
+		axis = 1;
+	}
+	else{
+		axis = 2;
+	}
+	
+	//start_time = clock();
+	if (axis == 0){  //x 
+		std::sort(objs->begin(), objs->end(), xcomp);
+		left_area = 0;
+		right_area = 0;
+		for (int i = 0; i < objs->size() - 1; i++)
+		{
+			left_area += objs->at(i)->s_area;
+			right_area = total_area - left_area;
+			//float p_area = left_area + right_area;
+			float cost = ct + (left_area*i*ci /total_area) + (right_area*(size - i)*ci / total_area);
+			if (cost < m_cost){
+				m_cost = cost;
+				axis = 0;
+				pos = i;
+			}
+		}
+	}
+	else if (axis == 1){  //y 
+		std::sort(objs->begin(), objs->end(), ycomp);
+		left_area = 0;
+		right_area = 0;
+		for (int i = 0; i < objs->size() - 1; i++)
+		{
+			left_area += objs->at(i)->s_area;
+			right_area = total_area - left_area;
+			//float p_area = left_area + right_area;
+			float cost = ct + (left_area*i*ci / total_area) + (right_area*(size - i)*ci / total_area);
+			if (cost < m_cost){
+				m_cost = cost;
+				axis = 1;
+				pos = i;
+			}
+		}
+	}
+	else{  //z
+		std::sort(objs->begin(), objs->end(), zcomp);
+		left_area = 0;
+		right_area = 0;
+		for (int i = 0; i < objs->size() - 1; i++)
+		{
+			left_area += objs->at(i)->s_area;
+			right_area = total_area - left_area;
+			//float p_area = left_area + right_area;
+			float cost = ct + (left_area*i*ci / total_area) + (right_area*(size - i)*ci / total_area);
+			if (cost < m_cost){
+				m_cost = cost;
+				axis = 2;
+				pos = i;
+			}
+		}
+	}
+	
+	//end_time = clock();
+	//std::cout << "cut test time : " << ((double)(end_time - start_time)) / CLOCKS_PER_SEC << "\n";
+	
+	/*
 	// try to divide along x-axis 
+	//start_time = clock();
 	std::sort(objs->begin(), objs->end(),xcomp);
+	//end_time = clock();
+	//std::cout << "sort Time : " << ((double)(end_time - start_time)) / CLOCKS_PER_SEC << "\n";
+	//start_time = clock();
 	for (int i = 0; i < objs->size()-1; i++)
 	{
 		left_area = 0;
@@ -53,6 +166,9 @@ void BVH::subdivide(BSP_node* node, Objects * objs)
 			pos = i;
 		}
 	}
+	//end_time = clock();
+	//std::cout << "cut test time : " << ((double)(end_time - start_time)) / CLOCKS_PER_SEC << "\n";
+
 	// try to divide along y-axis 
 	std::sort(objs->begin(), objs->end(),ycomp);
 	for (int i = 0; i < objs->size() - 1; i++)
@@ -105,7 +221,7 @@ void BVH::subdivide(BSP_node* node, Objects * objs)
 	{
 		std::sort(objs->begin(), objs->end(), ycomp);
 	}
-
+	*/
 	// setup left and right nodes and their boudning box
 	node->l_node = new BSP_node();
 	node->r_node = new BSP_node();
@@ -168,12 +284,14 @@ void BVH::subdivide(BSP_node* node, Objects * objs)
 	}
 	else{
 		node->l_node->obj_arr = left_objs;
+		leaf_num++;
 	}
 	if (objs->size() - pos > 8){
 		subdivide(node->r_node, right_objs);
 	}
 	else{
 		node->r_node->obj_arr = right_objs;
+		leaf_num++;
 	}
 }
 
@@ -208,6 +326,9 @@ BVH::intersect(HitInfo& minHit, const Ray& ray, float tMin, float tMax) const
         }
     }*/
 	/////////////////////////////////////////////////////////////////////////
+	if (hit){
+		ray_tri_intersection++;
+	}
     return hit;
 }
 
@@ -255,6 +376,7 @@ bool BVH::traverse(BSP_node* node, HitInfo& minHit, const Ray& ray, float tMin, 
 	HitInfo tempMinHit;
 
 	if (box_intersect(ray, node)){
+		ray_box_intersection++;
 		//std::cout << "box hit!\n";
 		// check if node is leaf
 		if (node->obj_arr != NULL){
