@@ -10,7 +10,7 @@ int BVH::tri_num = 0;
 int BVH::leaf_num = 0;
 int BVH::ray_box_intersection = 0;
 int BVH::ray_tri_intersection = 0;
-
+int BVH::ray_num = 0;
 void
 BVH::build(Objects * objs)
 {

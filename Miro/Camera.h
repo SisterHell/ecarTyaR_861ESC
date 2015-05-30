@@ -33,6 +33,8 @@ public:
     inline void setBGColor(float x, float y, float z);
     inline void setBGColor(const Vector3& color);
     inline void setFOV(float fov) {m_fov = fov;}
+	inline void setAperature(float a){ aperatureSize = a; }
+	inline void setFocalPoint(const Vector3& v);
 
     inline float fov() const                {return m_fov;}
     inline const Vector3 & viewDir() const  {return m_viewDir;}
@@ -40,8 +42,10 @@ public:
     inline const Vector3 & up() const       {return m_up;}
     inline const Vector3 & eye() const      {return m_eye;}
     inline const Vector3 & bgColor() const  {return m_bgColor;}
+	inline const Vector3 & focalPoint() const { return m_focalPoint; }
 
     Ray eyeRay(int x, int y, int imageWidth, int imageHeight);
+	Ray Camera::DOFeyeRay(int x, int y, int imageWidth, int imageHeight); 
     
     void drawGL();
 
@@ -57,6 +61,8 @@ private:
     Vector3 m_up;
     Vector3 m_viewDir;
     Vector3 m_lookAt;
+	Vector3 m_focalPoint;
+	float aperatureSize;
     float m_fov;
 };
 
@@ -98,6 +104,9 @@ inline void Camera::setViewDir(const Vector3& vd)
 
 inline void Camera::setLookAt(float x, float y, float z)
 {
+	//std::cout << "m_lookAt: " << m_lookAt.x << ", " << m_lookAt.y << ", " << m_lookAt.z << std::endl;
+	m_lookAt.x = x; m_lookAt.y = y;  m_lookAt.z = z;
+	//std::cout << "m_lookAt: " << m_lookAt.x << ", " << m_lookAt.y << ", " << m_lookAt.z << std::endl;
     Vector3 dir = Vector3(x, y, z) - m_eye;
     setViewDir(dir);
 }
@@ -116,5 +125,7 @@ inline void Camera::setBGColor(const Vector3& vd)
 {
     setBGColor(vd.x, vd.y, vd.z);
 }
+inline void Camera::setFocalPoint(const Vector3& v)
+{ m_focalPoint.set(v.x, v.y, v.z); }
 
 #endif // CSE168_CAMERA_H_INCLUDED

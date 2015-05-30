@@ -407,14 +407,17 @@ reflectionScene2(){
 	g_scene = new Scene;
 	g_image = new Image;
 
-	g_image->resize(128, 128);
+	g_image->resize(512, 512);
 
 	// set up the camera
-	g_camera->setBGColor(Vector3(0.0f, 0.0f, 0.2f));
+	g_camera->setBGColor(Vector3(0.0f, 0.0f, 0.0f));
+	//-4 ~ 0 with 0.5 interval x
+	//7 ~ 3 with 0.5 interval y
 	g_camera->setEye(Vector3(-2, 5, 11));
 	g_camera->setLookAt(Vector3(-.5, 1, 0));
 	g_camera->setUp(Vector3(0, 1, 0));
 	g_camera->setFOV(45);
+	g_camera->setFocalPoint(Vector3(0, 0, -1));
 
 	// create and place a point light source
 	PointLight * light = new PointLight;
@@ -507,7 +510,7 @@ reflectionScene3(){
 	// set up the camera
 	g_camera->setBGColor(Vector3(0.0f, 0.0f, 0.2f));
 	g_camera->setEye(Vector3(-2, 5, 11));
-	g_camera->setLookAt(Vector3(-.5, 1, 0));
+	g_camera->setLookAt(Vector3(-0.5, 1, 0));
 	g_camera->setUp(Vector3(0, 1, 0));
 	g_camera->setFOV(45);
 
@@ -811,6 +814,103 @@ makeBunnyScene()
 	g_scene->preCalc();
 }
 
+
+void
+makeCornellScene()
+{
+	g_camera = new Camera;
+	g_scene = new Scene;
+	g_image = new Image;
+
+	g_image->resize(256, 256);
+
+	// set up the camera
+	g_camera->setBGColor(Vector3(0.0f, 0.0f, 0.2f));
+	g_camera->setEye(Vector3(2.5, 2.5, 7));
+	g_camera->setLookAt(Vector3(2.5, 2.5, 0));
+	g_camera->setUp(Vector3(0, 1, 0));
+	g_camera->setFOV(45);
+
+	// create and place a point light source
+	PointLight * light = new PointLight;
+	light->setPosition(Vector3(2.75, 5.45 - epsilon, -2.75));
+	light->setColor(Vector3(1, 1, 1));
+	light->setWattage(250);
+	g_scene->addLight(light);
+
+	//PointLight * light2 = new PointLight;
+	//light2->setPosition(Vector3(2.75, 3, 1));
+	//light2->setColor(Vector3(1, 1, 1));
+	//light2->setWattage(100);
+	//g_scene->addLight(light2);
+
+	Material* mat = new Lambert(Vector3(1.0f));
+	Material* mat2 = new Lambert(Vector3(1.0f, 0.0f, 0.0f));
+	Material* mat3 = new Lambert(Vector3(0.0f, 1.0f, 0.0f));
+
+	Material* Light = new Lambert(Vector3(1.0f, 1.0f, 1.0f));
+	Light->isLight(Vector3(1.0f, 1.0f, 1.0f));
+
+	TriangleMesh * bunny = new TriangleMesh;
+	bunny->load("Object/cornell_box.obj");
+
+	// create all the triangles in the bunny mesh and add to the scene
+	for (int i = 0; i < bunny->numTris(); ++i)
+	{
+		Triangle* t = new Triangle;
+		t->setIndex(i);
+		t->setMesh(bunny);
+		if (i == 4 || i == 5){
+			t->setMaterial(mat2);
+		}
+		else if (i == 6 || i == 7){
+			t->setMaterial(mat3);
+		}
+		else{
+			t->setMaterial(mat);
+		}
+		g_scene->addObject(t);
+	}
+
+	// create the floor triangle
+	TriangleMesh * floor = new TriangleMesh;
+	floor->createSingleTriangle();
+	floor->setV1(Vector3(3.0, 5.5 - epsilon, -2.5));
+	floor->setV2(Vector3(2.5, 5.5 - epsilon, -2.5));
+	floor->setV3(Vector3(3.0, 5.5 - epsilon, -3));
+	floor->setN1(Vector3(0, -1, 0));
+	floor->setN2(Vector3(0, -1, 0));
+	floor->setN3(Vector3(0, -1, 0));
+
+	TriangleMesh * floor2 = new TriangleMesh;
+	floor2->createSingleTriangle();
+	floor2->setV1(Vector3(2.5, 5.5 - epsilon, -3));
+	floor2->setV2(Vector3(3.0, 5.5 - epsilon, -3));
+	floor2->setV3(Vector3(2.5, 5.5 - epsilon, -2.5));
+	floor2->setN1(Vector3(0, -1, 0));
+	floor2->setN2(Vector3(0, -1, 0));
+	floor2->setN3(Vector3(0, -1, 0));
+
+
+
+	Triangle* t = new Triangle;
+	t->setIndex(0);
+	t->setMesh(floor);
+	t->setMaterial(Light);
+	g_scene->addObject(t);
+
+
+	Triangle* t2 = new Triangle;
+	t2->setIndex(0);
+	t2->setMesh(floor2);
+	t2->setMaterial(Light);
+	g_scene->addObject(t2);
+	// let objects do pre-calculations if needed
+
+
+	g_scene->preCalc();
+	g_scene->pathTrace = true;
+}
 int
 main(int argc, char*argv[])
 {
@@ -821,14 +921,16 @@ main(int argc, char*argv[])
 	//makeTeapotScene();
 	//makeSphereScene();
 	//reflectionScene();
-	//reflectionScene2();
+	reflectionScene2();
 	//reflectionScene3();
 	//glassBallsScene();
 	//refractionScene();
 	//makeTeapotScene();
 	//makeBunny1Scene();
 	//makeBunny20Scene();
-	makeSponzaScene();
+	//makeSponzaScene();
+	//makeCornellScene();
+	//makeSponzaScene2();
     MiroWindow miro(&argc, argv);
     miro.mainLoop();
 

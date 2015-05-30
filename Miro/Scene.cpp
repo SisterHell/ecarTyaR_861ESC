@@ -75,23 +75,86 @@ Scene::raytraceImage(Camera *cam, Image *img)
     Vector3 shadeResult;
 	m_bvh.ray_box_intersection = 0;
 	m_bvh.ray_tri_intersection = 0;
+	m_bvh.ray_num = 0;
+	const int height = img->height();
+	const int width = img->width();
     // loop over all pixels in the image
 	start_time = clock();
-	for (int j = 0; j < img->height(); ++j)
+	for (int j = 0; j < height; ++j)
     {
-        for (int i = 0; i < img->width(); ++i)
+        for (int i = 0; i < width; ++i)
         {
+			/*
 			Material::reflectDepth = 0;
 			Material::refractDepth = 0;
-
-            ray = cam->eyeRay(i, j, img->width(), img->height());
+			ray = cam->eyeRay(i, j, width, height);
 			ray.n = 1;
 
-            if (trace(hitInfo, ray))
-            {
-                shadeResult = hitInfo.material->shade(ray, hitInfo, *this);
-                img->setPixel(i, j, shadeResult);
-            }
+			if (trace(hitInfo, ray))
+			{
+				shadeResult = hitInfo.material->shade(ray, hitInfo, *this);
+				img->setPixel(i, j, shadeResult);
+			}
+			*/
+			// DOF
+			int count = 0;
+			shadeResult.x = 0; shadeResult.y = 0; shadeResult.z = 0;
+			for (int k = 0; k < 200; k++){
+				ray = cam->DOFeyeRay(i, j, width, height);
+				ray.n = 1;
+				Material::reflectDepth = 0;
+				Material::refractDepth = 0;
+				if (trace(hitInfo, ray))
+				{
+					shadeResult += hitInfo.material->shade(ray, hitInfo, *this);
+					count++;
+				}
+			}
+			shadeResult /= 200.0f;
+			if (count != 0)
+				img->setPixel(i, j, shadeResult);
+			
+
+			/* anti aliasing
+			if (i == 0 || j == 0 || i == width - 1 || j == height - 1){
+
+				ray = cam->eyeRay(i, j, width, height);
+				ray.n = 1;
+
+				if (trace(hitInfo, ray))
+				{
+					shadeResult = hitInfo.material->shade(ray, hitInfo, *this);
+					img->setPixel(i, j, shadeResult);
+				}
+			}
+			//3x supersampling
+			else{
+				int count = 0;
+				shadeResult.x = 0; shadeResult.y = 0; shadeResult.z = 0;
+				for (int k = -1; k < 2; k++){
+					for (int l = -1; l < 2; l++){
+
+						Material::reflectDepth = 0;
+						Material::refractDepth = 0;
+
+						ray = cam->eyeRay(i + 0.33*k, j + 0.33*l, width, height);
+						ray.n = 1;
+
+
+						if (trace(hitInfo, ray))
+						{
+							shadeResult += hitInfo.material->shade(ray, hitInfo, *this);
+
+							count++;
+						}
+					}
+				}
+				//if (count == 0) std::cout << "nono" << std::endl;
+				shadeResult /= (float)count;
+				if (count != 0)
+				img->setPixel(i, j, shadeResult);
+			}
+			*/
         }
         img->drawScanline(j);
         glFinish();
@@ -104,12 +167,14 @@ Scene::raytraceImage(Camera *cam, Image *img)
     
 	std::cout << "ray_box_intersection: " << m_bvh.ray_box_intersection << std::endl;
 	std::cout << "ray_tri_intersection: " << m_bvh.ray_tri_intersection << std::endl;
+	std::cout << "ray_num: " << m_bvh.ray_num << std::endl;
     debug("done Raytracing!\n");
 }
 
 bool
 Scene::trace(HitInfo& minHit, const Ray& ray, float tMin, float tMax) const
 {
+	m_bvh.ray_num++;
 	return m_bvh.intersect(minHit, ray, tMin, tMax);
 }
 
@@ -121,5 +186,6 @@ Scene::trace(HitInfo& minHit, const Ray& ray, int& depth, float tMin, float tMax
 	if (depth > MAX_DEPTH){
 		return false;
 	}
+	m_bvh.ray_num++;
 	return m_bvh.intersect(minHit, ray, tMin, tMax);
 }

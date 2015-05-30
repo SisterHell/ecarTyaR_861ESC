@@ -8,6 +8,7 @@
 #include "PointLight.h"
 #include "TriangleMesh.h"
 #include "Triangle.h"
+#include "Sphere.h"
 #include "Lambert.h"
 
 // local helper function declarations
@@ -40,7 +41,7 @@ makeTeapotScene()
     PointLight * light = new PointLight;
     light->setPosition(Vector3(10, 10, 10));
     light->setColor(Vector3(1, 1, 1));
-    light->setWattage(700);
+    light->setWattage(2800);
     g_scene->addLight(light);
 
     Material* material = new Lambert(Vector3(1.0f));
@@ -89,7 +90,7 @@ makeBunny1Scene()
     PointLight * light = new PointLight;
     light->setPosition(Vector3(10, 20, 10));
     light->setColor(Vector3(1, 1, 1));
-    light->setWattage(1000);
+    light->setWattage(4000);
     g_scene->addLight(light);
 
     Material* material = new Lambert(Vector3(1.0f));
@@ -126,7 +127,7 @@ makeBunny20Scene()
     g_scene = new Scene;
     g_image = new Image;
 
-    g_image->resize(128, 128);
+    g_image->resize(512, 512);
     
     // set up the camera
     g_camera->setBGColor(Vector3(0.0f, 0.0f, 0.2f));
@@ -139,7 +140,7 @@ makeBunny20Scene()
     PointLight * light = new PointLight;
     light->setPosition(Vector3(10, 20, 10));
     light->setColor(Vector3(1, 1, 1));
-    light->setWattage(1000);
+    light->setWattage(4000);
     g_scene->addLight(light);
 
     TriangleMesh * mesh;
@@ -356,7 +357,7 @@ makeSponzaScene()
     PointLight * light = new PointLight;
     light->setPosition(Vector3(0, 10.0, 0));
     light->setColor(Vector3(1, 1, 1));
-    light->setWattage(200);
+    light->setWattage(800);
     g_scene->addLight(light);
 
     Material* material = new Lambert(Vector3(1.0f));
@@ -368,6 +369,48 @@ makeSponzaScene()
     g_scene->preCalc();
 }
 
+void
+makeSponzaScene2()
+{
+	g_camera = new Camera;
+	g_scene = new Scene;
+	g_image = new Image;
+
+	g_image->resize(256, 256);
+
+	// set up the camera
+	g_camera->setBGColor(Vector3(0.0f, 0.0f, 0.2f));
+	g_camera->setEye(Vector3(8, 1.5, 1));
+	g_camera->setLookAt(Vector3(0, 2.5, -1));
+	g_camera->setUp(Vector3(0, 1, 0));
+	g_camera->setFOV(55);
+
+	// create and place a point light source
+	PointLight * light = new PointLight;
+	light->setPosition(Vector3(0, 10.0, 0));
+	light->setColor(Vector3(1, 1, 1));
+	light->setWattage(800);
+	g_scene->addLight(light);
+
+	Material* material = new Lambert(Vector3(1.0f));
+	TriangleMesh * mesh = new TriangleMesh;
+	mesh->load("sponza.obj");
+	addMeshTrianglesToScene(mesh, material);
+
+	Material* Light = new Lambert(Vector3(1.0f, 1.0f, 1.0f));
+	Light->isLight(Vector3(1.0f, 1.0f, 1.0f));
+
+	Sphere * sphere = new Sphere;
+	sphere->setCenter(Vector3(0, 10.0f, 0));
+	sphere->setRadius(2.0f);
+	sphere->setMaterial(Light);
+	g_scene->addObject(sphere);
+
+	// let objects do pre-calculations if needed
+	g_scene->preCalc();
+	g_scene->pathTrace = true;
+
+}
 
 // local helper function definitions
 namespace

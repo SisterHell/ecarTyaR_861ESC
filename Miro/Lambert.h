@@ -27,7 +27,7 @@ public:
     virtual void preCalc() {}
     
     virtual Vector3 shade(const Ray& ray, const HitInfo& hit,
-                          const Scene& scene) const;
+                          const Scene& scene, const int depth = 0) const;
 	
 	float m_rn;		// material refraction index
 

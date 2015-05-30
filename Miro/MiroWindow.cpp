@@ -224,6 +224,13 @@ MiroWindow::keyboard(unsigned char key, int x, int y)
         }
         break;
 
+		case 'k':
+		case 'K':
+		{
+					shadowOn = !shadowOn;
+					break;
+		}
+
         default:
         break;
     }
