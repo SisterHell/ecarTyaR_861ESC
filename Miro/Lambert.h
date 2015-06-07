@@ -15,6 +15,7 @@ public:
 			const bool & NS = false);
     virtual ~Lambert();
 
+	virtual const Vector3 & getKD()const{ return m_kd; }
     const Vector3 & kd() const {return m_kd;}
     const Vector3 & ka() const {return m_ka;}
 
@@ -28,7 +29,6 @@ public:
     
     virtual Vector3 shade(const Ray& ray, const HitInfo& hit,
                           const Scene& scene, const int depth = 0) const;
-	
 	float m_rn;		// material refraction index
 
 protected:

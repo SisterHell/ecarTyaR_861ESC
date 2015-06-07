@@ -37,6 +37,9 @@ public:
     */
     const Vector3 & operator=(float a) {x = y = z = a; return *this;}
 
+	void print(){
+		printf("V = %f,%f,%f\n", x, y, z);
+	}
     void set(float a) {x = y = z = a;}
     void set(float a, float b, float c) {x = a; y = b; z = c;}
     void set(const Vector3 & v) {x = v.x; y = v.y; z = v.z;}

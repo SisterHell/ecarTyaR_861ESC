@@ -982,7 +982,7 @@ main(int argc, char*argv[])
     // create a scene
     //makeSpiralScene();
 	//makeLorenzScene();
-	makeBunnyScene();
+	//makeBunnyScene();
 	//makeMAKEScene();
 	//makeTeapotScene();
 	//makeSphereScene();
@@ -997,7 +997,7 @@ main(int argc, char*argv[])
 	//makeBunny1Scene();
 	//makeBunny20Scene();
 	//makeSponzaScene();
-	//makeCornellScene();
+	makeCornellScene();
 	//makeSponzaScene2();
 	//makeCornellScene2();
     MiroWindow miro(&argc, argv);

@@ -10,15 +10,16 @@ extern bool shadowOn;
 class Material
 {
 public:
-    Material();
-    virtual ~Material();
+	Material();
+	virtual ~Material();
 
-    virtual void preCalc() {}
-    
-    virtual Vector3 shade(const Ray& ray, const HitInfo& hit,
-                          const Scene& scene, const int depth = 0) const;
+	virtual void preCalc() {}
+
+	virtual Vector3 shade(const Ray& ray, const HitInfo& hit,
+		const Scene& scene, const int depth = 0) const;
 
 	void isLight(Vector3 color){ light = true; lightColor = color; }
+	virtual const Vector3& getKD() const { return Vector3(1, 1, 1); }
 
 	static int reflectDepth; // this number avoid too many ray trace recursion for refelction
 	static int refractDepth; // this number avoid too many ray trace recursion for refraction

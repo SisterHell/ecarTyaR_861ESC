@@ -82,6 +82,9 @@ Scene::raytraceImage(Camera *cam, Image *img)
 	const int width = img->width();
     // loop over all pixels in the image
 	start_time = clock();
+	for (int i = 0; i < m_lights.size(); i++){
+		phoMap.emitPhoton(this, m_lights[i], 100000);
+	}
 	
 	for (int j = 0; j < height; ++j)
     {

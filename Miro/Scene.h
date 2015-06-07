@@ -5,6 +5,7 @@
 #include "Object.h"
 #include "PointLight.h"
 #include "BVH.h"
+#include "PhotonMap.h"
 
 class Camera;
 class Image;
@@ -34,6 +35,9 @@ public:
 	bool trace(HitInfo& minHit, const Ray& ray, int& depth,
                float tMin = 0.0f, float tMax = MIRO_TMAX) const;
 	bool pathTrace = false;
+	bool photonTrace = true;
+
+	PhotonMap phoMap;
 
 	Vector3 bgColor;
 protected:

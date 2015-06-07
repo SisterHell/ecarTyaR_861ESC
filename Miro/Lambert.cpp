@@ -47,7 +47,17 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene, const int
 	if (noise){
 		factor = (F[1] - F[0]);
 	}
-	if (!scene.pathTrace){
+	if (scene.photonTrace){
+		int num = 0;
+		for (int i = 0; i < scene.phoMap.photonList.size(); i++){
+			if ((scene.phoMap.photonList[i]->position - hit.P).length() <= 0.1){
+				num++;
+				L += scene.phoMap.photonList[i]->power;// *dot(hit.N, scene.phoMap.photonList[i]->direction.negate());
+			}
+		}
+		//L.print();
+	}
+	else if (!scene.pathTrace){
 		for (lightIter = lightlist->begin(); lightIter != lightlist->end(); lightIter++)
 		{
 			PointLight* pLight = *lightIter;
