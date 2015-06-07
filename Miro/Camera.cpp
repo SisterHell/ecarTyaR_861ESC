@@ -154,7 +154,7 @@ Camera::DOFeyeRay(int x, int y, int imageWidth, int imageHeight)
 	const Vector3 uDir = cross(m_up, wDir).normalize();
 	const Vector3 vDir = cross(wDir, uDir).normalize();
 
-	//const float distance = (m_focalPoint - m_eye).length();
+	const float distance = (m_focalPoint - m_eye).length();
 
 	// next find the corners of the image plane in camera space
 	// --------------------------------------------------------
@@ -177,9 +177,6 @@ Camera::DOFeyeRay(int x, int y, int imageWidth, int imageHeight)
 	//const float imPlaneUPos = left   + (right - left)*(((float)x+0.5f)/(float)imageWidth); 
 	//const float imPlaneVPos = bottom + (top - bottom)*(((float)y+0.5f)/(float)imageHeight); 
 
-	//for anti-aliasing
-	const float imPlaneUPos = left + (right - left)*(((float)x) / (float)imageWidth);
-	const float imPlaneVPos = bottom + (top - bottom)*(((float)y) / (float)imageHeight);
 	float d;
 	float dx, dy;
 	do{
@@ -189,12 +186,25 @@ Camera::DOFeyeRay(int x, int y, int imageWidth, int imageHeight)
 		//std::cout << "I'm stuck in random choice." << std::endl;
 		//std::cout << x << std::endl;
 	} while (d > 1);
-	Vector3 xApertureRadius = 0.2 * uDir;
-	Vector3 yApertureRadius = 0.2 * vDir;
+	Vector3 xApertureRadius = 0.8	 * uDir;
+	Vector3 yApertureRadius = 0.8 * vDir;
+
+	//for anti-aliasing
+	const float imPlaneUPos = left + (right - left)*(((float)x) / (float)imageWidth);
+	const float imPlaneVPos = bottom + (top - bottom)*(((float)y) / (float)imageHeight);
+
+
+	Vector3 originalDir((imPlaneUPos*uDir + imPlaneVPos*vDir - wDir).normalize());
+
+	Vector3 focusPt = m_eye + originalDir * distance;
+
+	//const float newImPlaneUPos = left + (right - left)*(((float)x + dx*0.2) / (float)imageWidth);
+	//const float newImPlaneVPos = bottom + (top - bottom)*(((float)y + dy*0.2) / (float)imageHeight);
+
 	//return Ray(m_eye, (imPlaneUPos*uDir + imPlaneVPos*vDir - wDir).normalize());
 	//Vector3 vRight = cross(g_camera->viewDir(), g_camera->up());
 	// now rotate everything
-	Vector3 v = g_camera->viewDir();
+	//Vector3 v = g_camera->viewDir();
 	//v.rotate(-dx * PI / 180., vRight);
 	//v.rotate(-dy * PI / 180., g_camera->up());
 	Vector3 newEYE = m_eye;
@@ -203,7 +213,10 @@ Camera::DOFeyeRay(int x, int y, int imageWidth, int imageHeight)
 	//Vector3 v = m_lookAt - newEYE;
 	//std::cout << "v: " << v.x << ", " << v.y << ", " << v.z << std::endl;
 	//Vector3 look(-0.5, 1, 0);
-	Vector3 ddd = (imPlaneUPos*uDir + imPlaneVPos*vDir) + (m_lookAt - newEYE).normalize();
+	
+	//TODO
+	//shoot ray from newImPlaneU,VPos to the focusPt
+	Vector3 ddd = focusPt - newEYE;//(imPlaneUPos*uDir + imPlaneVPos*vDir) + (m_focalPoint - m_eye).normalize();
 
 	return Ray(newEYE, (ddd).normalize());
 }

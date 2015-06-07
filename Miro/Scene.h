@@ -34,6 +34,8 @@ public:
 	bool trace(HitInfo& minHit, const Ray& ray, int& depth,
                float tMin = 0.0f, float tMax = MIRO_TMAX) const;
 	bool pathTrace = false;
+
+	Vector3 bgColor;
 protected:
     Objects m_objects;
     BVH m_bvh;

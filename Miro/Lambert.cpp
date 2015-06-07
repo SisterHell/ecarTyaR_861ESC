@@ -4,6 +4,7 @@
 #include <algorithm>
 #include "Worley.h"
 #include "Perlin.h"
+#include "Sampler.h"
 
 Lambert::Lambert(const Vector3 & kd, const Vector3 & ka, const Vector3 & ks, const Vector3 & kt, const bool &NS) :
 m_kd(kd), m_ka(ka), m_ks(ks), m_kt(kt), noise()
@@ -105,7 +106,7 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene, const int
 			if (m_ks != 0){
 
 				wr = 2 * dot(viewDir, hit.N) * hit.N + ray.d;
-				L += m_ks * std::max(0.0f, E) * powf(dot(viewDir, wr), 80) / (nDotL);
+				L += m_ks * std::max(0.0f, E) * powf(dot(viewDir, wr), 10) / (nDotL);
 			}
 
 
@@ -116,11 +117,15 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene, const int
 		if (m_ks != 0){
 
 			wr = 2 * dot(viewDir, hit.N) * hit.N + ray.d;
+
 			HitInfo hitReflect;
 			Ray rayReflect(hit.P + wr * epsilon, wr);
 
 			if (scene.trace(hitReflect, rayReflect, Material::reflectDepth)){
 				L += m_ks * hitReflect.material->shade(rayReflect, hitReflect, scene);
+			}
+			else{
+				return scene.bgColor;
 			}
 		}
 
@@ -141,6 +146,7 @@ Lambert::shade(const Ray& ray, const HitInfo& hit, const Scene& scene, const int
 				wr = -1 * n * (viewDir - dot(viewDir, hit.N)*hit.N) - sqrtf(1 - pow(n, 2)*(1 - pow(dot(viewDir, hit.N), 2)))*hit.N;
 				wr.normalize();
 				HitInfo hitRefract;
+
 				Ray rayRefract(hit.P + epsilon * wr, wr);
 
 				if (scene.trace(hitRefract, rayRefract, Material::refractDepth)){

@@ -407,7 +407,7 @@ reflectionScene2(){
 	g_scene = new Scene;
 	g_image = new Image;
 
-	g_image->resize(512, 512);
+	g_image->resize(256, 256);
 
 	// set up the camera
 	g_camera->setBGColor(Vector3(0.0f, 0.0f, 0.0f));
@@ -417,7 +417,7 @@ reflectionScene2(){
 	g_camera->setLookAt(Vector3(-.5, 1, 0));
 	g_camera->setUp(Vector3(0, 1, 0));
 	g_camera->setFOV(45);
-	g_camera->setFocalPoint(Vector3(0, 0, -1));
+	g_camera->setFocalPoint(Vector3(0,1,1));
 
 	// create and place a point light source
 	PointLight * light = new PointLight;
@@ -763,26 +763,90 @@ makeBunnyScene()
 	g_scene = new Scene;
 	g_image = new Image;
 
-	g_image->resize(128, 128);
+	g_image->resize(256, 256);
 
 	// set up the camera
-	g_camera->setBGColor(Vector3(0.0f, 0.0f, 0.2f));
-	g_camera->setEye(Vector3(-2, 3, 5));
-	g_camera->setLookAt(Vector3(-.5, 1, 0));
+	g_camera->setBGColor(Vector3(0.5294f, 0.8078f, 0.9215f));
+	g_camera->setEye(Vector3(70, -90, 1520));
+	//200, 20, 1800 - castle
+	g_camera->setLookAt(Vector3(200, -30, 900));
+	//200, -50, 900
 	g_camera->setUp(Vector3(0, 1, 0));
 	g_camera->setFOV(45);
+	g_camera->setFocalPoint(Vector3(100, -60, 1400));
 
 	// create and place a point light source
 	PointLight * light = new PointLight;
-	light->setPosition(Vector3(-3, 15, 3));
-	light->setColor(Vector3(1, 1, 1));
-	light->setWattage(2000);
+	light->setPosition(Vector3(200, 50, 1100));
+	//200,30,900
+	light->setColor(Vector3((192.0/255.0), (191.0/255.0), (173.0/255.0)));
+	light->setWattage(800000);
 	g_scene->addLight(light);
 
-	Material* mat = new Lambert(Vector3(1.0f));
+	PointLight * light2 = new PointLight;
+	light2->setPosition(Vector3(150, -70, 1100));
+	//200,30,900
+	light2->setColor(Vector3(0.9, 0.1, 0.1));
+	light2->setWattage(30000);
+	g_scene->addLight(light2);
+
+	PointLight * light3 = new PointLight;
+	light3->setPosition(Vector3(250, -90, 1150));
+	//200,30,900
+	light3->setColor(Vector3(0.1, 0.9, 0.1));
+	light3->setWattage(30000);
+	g_scene->addLight(light3);
+
+	PointLight * light4 = new PointLight;
+	light4->setPosition(Vector3(110, -65, 1250));
+	//200,30,900
+	light4->setColor(Vector3(0.1, 0.1, 0.9));
+	light4->setWattage(20000);
+	g_scene->addLight(light4);
+
+	PointLight * light5 = new PointLight;
+	light5->setPosition(Vector3(120, -60, 1500));
+	//200,30,900
+	light5->setColor(Vector3(1, (135.0 / 255.0), 0));
+	light5->setWattage(50000);
+	g_scene->addLight(light5);
+	
+	Material* mat8 = new Lambert(Vector3(1.0f));
+
+	Material* mat7 = new Lambert(Vector3(1.0f));
+	((Lambert*)mat7)->setKd(Vector3(0.1333f));
+	((Lambert*)mat7)->setKs(Vector3(0.0f));
+	((Lambert*)mat7)->setKt(Vector3(0.0f));
+
+	Material* mat9 = new Lambert(Vector3(1.0f));
+	((Lambert*)mat9)->setKd(Vector3(0.0078f));
+	((Lambert*)mat9)->setKs(Vector3(0.0f));
+	((Lambert*)mat9)->setKt(Vector3(0.0f));
+
+	Material* mirror = new Lambert(Vector3(1.0f));
+	((Lambert*)mirror)->setKd(Vector3(0.0f));
+	((Lambert*)mirror)->setKs(Vector3(1.0f));
+	((Lambert*)mirror)->setKt(Vector3(0.0f));
+
+	Material* glass = new Lambert(Vector3(1.0f));
+	((Lambert*)glass)->setKd(Vector3(0.0f));
+	((Lambert*)glass)->setKs(Vector3(0.0f));
+	((Lambert*)glass)->setKt(Vector3(1.0f));
+
+	Sphere * sphere = new Sphere;
+	sphere->setCenter(Vector3(100, -65, 1400));
+	sphere->setRadius(12);
+	sphere->setMaterial(mirror);
+	g_scene->addObject(sphere);
+
+	Sphere * sphere2 = new Sphere;
+	sphere2->setCenter(Vector3(100, -90, 1400));
+	sphere2->setRadius(10);
+	sphere2->setMaterial(glass);
+	g_scene->addObject(sphere2);
 
 	TriangleMesh * bunny = new TriangleMesh;
-	bunny->load("Object/bunny.obj");
+	bunny->load("Object/castleInterior.obj");
 
 	// create all the triangles in the bunny mesh and add to the scene
 	for (int i = 0; i < bunny->numTris(); ++i)
@@ -790,7 +854,7 @@ makeBunnyScene()
 		Triangle* t = new Triangle;
 		t->setIndex(i);
 		t->setMesh(bunny);
-		t->setMaterial(mat);
+		t->setMaterial(mat8);
 		g_scene->addObject(t);
 	}
 
@@ -807,8 +871,8 @@ makeBunnyScene()
 	Triangle* t = new Triangle;
 	t->setIndex(0);
 	t->setMesh(floor);
-	t->setMaterial(mat);
-	g_scene->addObject(t);
+	//t->setMaterial(mat);
+	//g_scene->addObject(t);
 
 	// let objects do pre-calculations if needed
 	g_scene->preCalc();
@@ -830,6 +894,7 @@ makeCornellScene()
 	g_camera->setLookAt(Vector3(2.5, 2.5, 0));
 	g_camera->setUp(Vector3(0, 1, 0));
 	g_camera->setFOV(45);
+	//g_camera->setFocalPoint(Vector3(2.5, 2.5, -2));
 
 	// create and place a point light source
 	PointLight * light = new PointLight;
@@ -917,11 +982,14 @@ main(int argc, char*argv[])
     // create a scene
     //makeSpiralScene();
 	//makeLorenzScene();
-	//makeBunnyScene();
+	makeBunnyScene();
+	//makeMAKEScene();
 	//makeTeapotScene();
 	//makeSphereScene();
 	//reflectionScene();
-	reflectionScene2();
+
+	//reflectionScene2();
+
 	//reflectionScene3();
 	//glassBallsScene();
 	//refractionScene();
@@ -931,6 +999,7 @@ main(int argc, char*argv[])
 	//makeSponzaScene();
 	//makeCornellScene();
 	//makeSponzaScene2();
+	//makeCornellScene2();
     MiroWindow miro(&argc, argv);
     miro.mainLoop();
 

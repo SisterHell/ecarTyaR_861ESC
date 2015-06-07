@@ -370,6 +370,88 @@ makeSponzaScene()
 }
 
 void
+makeMAKEScene()
+{
+	g_camera = new Camera;
+	g_scene = new Scene;
+	g_image = new Image;
+
+	g_image->resize(128, 128);
+
+	// set up the camera
+	g_camera->setBGColor(Vector3(0.0f, 0.0f, 0.2f));
+	g_camera->setEye(Vector3(-2, 5, 7));
+	g_camera->setLookAt(Vector3(-.5, 1, 0));
+	g_camera->setUp(Vector3(0, 1, 0));
+	g_camera->setFOV(45);
+
+	// create and place a point light source
+	PointLight * light = new PointLight;
+	light->setPosition(Vector3(-3, 15, 3));
+	light->setColor(Vector3(1, 1, 1));
+	light->setWattage(2000);
+	g_scene->addLight(light);
+
+	Material* mat = new Lambert(Vector3(1.0f));
+
+	Material* glass = new Lambert(Vector3(1.0f));
+	((Lambert*)glass)->setKd(Vector3(0.0f));
+	((Lambert*)glass)->setKs(Vector3(0.0f));
+	((Lambert*)glass)->setKt(Vector3(1.0f));
+
+	Matrix4x4 xform;
+	xform.setIdentity();
+	xform *= scale(0.01, 0.01, 0.01);
+
+	TriangleMesh * bunny = new TriangleMesh;
+	bunny->load("Object/04.obj",xform);
+
+	// create all the triangles in the bunny mesh and add to the scene
+	for (int i = 0; i < bunny->numTris(); ++i)
+	{
+		Triangle* t = new Triangle;
+		t->setIndex(i);
+		t->setMesh(bunny);
+		t->setMaterial(glass);
+		g_scene->addObject(t);
+	}
+
+	// create the floor triangle
+	TriangleMesh * floor = new TriangleMesh;
+	floor->createSingleTriangle();
+	floor->setV1(Vector3(0, 0, 10));
+	floor->setV2(Vector3(10, 0, -10));
+	floor->setV3(Vector3(-10, 0, -10));
+	floor->setN1(Vector3(0, 1, 0));
+	floor->setN2(Vector3(0, 1, 0));
+	floor->setN3(Vector3(0, 1, 0));
+
+	TriangleMesh * wall = new TriangleMesh;
+	wall->createSingleTriangle();
+	wall->setV1(Vector3(0, 10, -10));
+	wall->setV2(Vector3(10, 0, -10));
+	wall->setV3(Vector3(-10, 0, -10));
+	wall->setN1(Vector3(0, 1, 0));
+	wall->setN2(Vector3(0, 1, 0));
+	wall->setN3(Vector3(0, 1, 0));
+
+	Triangle* t = new Triangle;
+	t->setIndex(0);
+	t->setMesh(floor);
+	t->setMaterial(mat);
+	g_scene->addObject(t);
+
+	Triangle* t2 = new Triangle;
+	t2->setIndex(0);
+	t2->setMesh(wall);
+	t2->setMaterial(mat);
+	g_scene->addObject(t2);
+
+	// let objects do pre-calculations if needed
+	g_scene->preCalc();
+}
+
+void
 makeSponzaScene2()
 {
 	g_camera = new Camera;
@@ -410,6 +492,138 @@ makeSponzaScene2()
 	g_scene->preCalc();
 	g_scene->pathTrace = true;
 
+
+
+}
+
+
+void
+makeCornellScene2()
+{
+	g_camera = new Camera;
+	g_scene = new Scene;
+	g_image = new Image;
+
+	g_image->resize(256, 256);
+
+	// set up the camera
+	g_camera->setBGColor(Vector3(0.0f, 0.0f, 0.2f));
+	g_camera->setEye(Vector3(2.5, 2.5, 7));
+	g_camera->setLookAt(Vector3(2.5, 2.5, 0));
+	g_camera->setUp(Vector3(0, 1, 0));
+	g_camera->setFOV(45);
+	g_camera->setFocalPoint(Vector3(2.5, 2.5, -2));
+
+	// create and place a point light source
+	PointLight * light = new PointLight;
+	light->setPosition(Vector3(2.75, 5.45 - epsilon, -2.75));
+	light->setColor(Vector3(1, 1, 1));
+	light->setWattage(250);
+	g_scene->addLight(light);
+
+	//PointLight * light2 = new PointLight;
+	//light2->setPosition(Vector3(2.75, 3, 1));
+	//light2->setColor(Vector3(1, 1, 1));
+	//light2->setWattage(100);
+	//g_scene->addLight(light2);
+
+	Material* mat = new Lambert(Vector3(1.0f));
+	Material* mat2 = new Lambert(Vector3(1.0f, 0.0f, 0.0f));
+	Material* mat3 = new Lambert(Vector3(0.0f, 1.0f, 0.0f));
+
+	Material* Light = new Lambert(Vector3(1.0f, 1.0f, 1.0f));
+	Light->isLight(Vector3(1.0f, 1.0f, 1.0f));
+
+	TriangleMesh * bunny = new TriangleMesh;
+	bunny->load("Object/cornell_box.obj");
+
+	// create all the triangles in the bunny mesh and add to the scene
+	for (int i = 0; i < bunny->numTris(); ++i)
+	{
+		Triangle* t = new Triangle;
+		t->setIndex(i);
+		t->setMesh(bunny);
+		if (i == 4 || i == 5){
+			t->setMaterial(mat2);
+		}
+		else if (i == 6 || i == 7){
+			t->setMaterial(mat3);
+		}
+		else{
+			t->setMaterial(mat);
+		}
+		g_scene->addObject(t);
+	}
+
+	Material* glass = new Lambert(Vector3(1.0f));
+	((Lambert*)glass)->setKd(Vector3(1.0f));
+	((Lambert*)glass)->setKs(Vector3(0.0f));
+	((Lambert*)glass)->setKt(Vector3(0.0f));
+
+	/*
+	Matrix4x4 xform;
+	xform.setIdentity();
+	xform *= translate(3.0, 2, -1);
+	xform *= scale(0.008, 0.008, 0.008);
+
+	TriangleMesh * water = new TriangleMesh;
+	water->load("Object/04.obj", xform);
+
+	// create all the triangles in the bunny mesh and add to the scene
+	for (int i = 0; i < water->numTris(); ++i)
+	{
+		Triangle* t = new Triangle;
+		t->setIndex(i);
+		t->setMesh(water);
+		t->setMaterial(glass);
+		g_scene->addObject(t);
+	}*/
+
+	Sphere * sphere = new Sphere;
+	sphere->setCenter(Vector3(2.1, 2, 0));
+	sphere->setRadius(0.9);
+	sphere->setMaterial(glass);
+	//g_scene->addObject(sphere);
+
+
+	// create the floor triangle
+	TriangleMesh * floor = new TriangleMesh;
+	floor->createSingleTriangle();
+	floor->setV1(Vector3(3.0, 5.5 - epsilon, -2.5));
+	floor->setV2(Vector3(2.5, 5.5 - epsilon, -2.5));
+	floor->setV3(Vector3(3.0, 5.5 - epsilon, -3));
+	floor->setN1(Vector3(0, -1, 0));
+	floor->setN2(Vector3(0, -1, 0));
+	floor->setN3(Vector3(0, -1, 0));
+
+	TriangleMesh * floor2 = new TriangleMesh;
+	floor2->createSingleTriangle();
+	floor2->setV1(Vector3(2.5, 5.5 - epsilon, -3));
+	floor2->setV2(Vector3(3.0, 5.5 - epsilon, -3));
+	floor2->setV3(Vector3(2.5, 5.5 - epsilon, -2.5));
+	floor2->setN1(Vector3(0, -1, 0));
+	floor2->setN2(Vector3(0, -1, 0));
+	floor2->setN3(Vector3(0, -1, 0));
+
+
+
+	Triangle* t = new Triangle;
+	t->setIndex(0);
+	t->setMesh(floor);
+	t->setMaterial(Light);
+	g_scene->addObject(t);
+
+
+	Triangle* t2 = new Triangle;
+	t2->setIndex(0);
+	t2->setMesh(floor2);
+	t2->setMaterial(Light);
+	g_scene->addObject(t2);
+	// let objects do pre-calculations if needed
+
+
+	g_scene->preCalc();
+	//g_scene->pathTrace = true;
 }
 
 // local helper function definitions

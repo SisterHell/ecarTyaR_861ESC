@@ -63,6 +63,7 @@ Scene::preCalc()
 
 	m_bvh.setRoot(min,max);
     m_bvh.build(&m_objects);
+	bgColor = g_camera->bgColor();
 }
 
 void
@@ -73,6 +74,7 @@ Scene::raytraceImage(Camera *cam, Image *img)
     Ray ray;
     HitInfo hitInfo;
     Vector3 shadeResult;
+	Vector3 shadeResult2;
 	m_bvh.ray_box_intersection = 0;
 	m_bvh.ray_tri_intersection = 0;
 	m_bvh.ray_num = 0;
@@ -80,43 +82,17 @@ Scene::raytraceImage(Camera *cam, Image *img)
 	const int width = img->width();
     // loop over all pixels in the image
 	start_time = clock();
+	
 	for (int j = 0; j < height; ++j)
     {
         for (int i = 0; i < width; ++i)
         {
 			/*
-			Material::reflectDepth = 0;
-			Material::refractDepth = 0;
-			ray = cam->eyeRay(i, j, width, height);
-			ray.n = 1;
+			//anti-aliasing + DOF
+			if (i == width - 1 || j == height - 1){
 
-			if (trace(hitInfo, ray))
-			{
-				shadeResult = hitInfo.material->shade(ray, hitInfo, *this);
-				img->setPixel(i, j, shadeResult);
-			}
-			*/
-			// DOF
-			int count = 0;
-			shadeResult.x = 0; shadeResult.y = 0; shadeResult.z = 0;
-			for (int k = 0; k < 200; k++){
-				ray = cam->DOFeyeRay(i, j, width, height);
-				ray.n = 1;
 				Material::reflectDepth = 0;
 				Material::refractDepth = 0;
-				if (trace(hitInfo, ray))
-				{
-					shadeResult += hitInfo.material->shade(ray, hitInfo, *this);
-					count++;
-				}
-			}
-			shadeResult /= 200.0f;
-			if (count != 0)
-				img->setPixel(i, j, shadeResult);
-			
-
-			/* anti aliasing
-			if (i == 0 || j == 0 || i == width - 1 || j == height - 1){
 
 				ray = cam->eyeRay(i, j, width, height);
 				ray.n = 1;
@@ -131,8 +107,90 @@ Scene::raytraceImage(Camera *cam, Image *img)
 			else{
 				int count = 0;
 				shadeResult.x = 0; shadeResult.y = 0; shadeResult.z = 0;
-				for (int k = -1; k < 2; k++){
-					for (int l = -1; l < 2; l++){
+				for (int k = 0; k < 3; k++){
+					for (int l = 0; l < 3; l++){
+
+						int count2 = 0;
+						shadeResult2.x = 0; shadeResult2.y = 0; shadeResult2.z = 0;
+						for (int m = 0; m < 80; m++){
+							Material::reflectDepth = 0;
+							Material::refractDepth = 0;
+
+							ray = cam->DOFeyeRay(i + 0.33*k, j + 0.33*l, width, height);
+							ray.n = 1;
+
+
+							if (trace(hitInfo, ray))
+							{
+								shadeResult2 += hitInfo.material->shade(ray, hitInfo, *this);
+								count2++;
+							}
+						}
+						if (count2 != 0){
+							shadeResult2 /= 80.0f;
+							count++;
+						}
+						shadeResult += shadeResult2;
+					}
+				}
+				//if (count == 0) std::cout << "nono" << std::endl;
+				shadeResult /= 9.0f;//(float)count;
+				if (count != 0)
+					img->setPixel(i, j, shadeResult);
+			}
+			*/
+			
+			//original
+			Material::reflectDepth = 0;
+			Material::refractDepth = 0;
+			ray = cam->eyeRay(i, j, width, height);
+			ray.n = 1;
+
+			if (trace(hitInfo, ray))
+			{
+				shadeResult = hitInfo.material->shade(ray, hitInfo, *this);
+				img->setPixel(i, j, shadeResult);
+			}
+			
+			/*
+			// DOF
+			int count = 0;
+			shadeResult.x = 0; shadeResult.y = 0; shadeResult.z = 0;
+			for (int k = 0; k < 50; k++){
+				ray = cam->DOFeyeRay(i, j, width, height);
+				ray.n = 1;
+				Material::reflectDepth = 0;
+				Material::refractDepth = 0;
+				if (trace(hitInfo, ray))
+				{
+					shadeResult += hitInfo.material->shade(ray, hitInfo, *this);
+					count++;
+				}
+			}
+			shadeResult /= 50.0f;
+			if (count != 0)
+				img->setPixel(i, j, shadeResult);
+			*/
+
+			/*
+			//anti aliasing
+			if (i == width - 1 || j == height - 1){
+
+				ray = cam->eyeRay(i, j, width, height);
+				ray.n = 1;
+
+				if (trace(hitInfo, ray))
+				{
+					shadeResult = hitInfo.material->shade(ray, hitInfo, *this);
+					img->setPixel(i, j, shadeResult);
+				}
+			}
+			//3x supersampling
+			else{
+				int count = 0;
+				shadeResult.x = 0; shadeResult.y = 0; shadeResult.z = 0;
+				for (int k = 0; k < 3; k++){
+					for (int l = 0; l < 3; l++){
 
 						Material::reflectDepth = 0;
 						Material::refractDepth = 0;
@@ -150,7 +208,7 @@ Scene::raytraceImage(Camera *cam, Image *img)
 					}
 				}
 				//if (count == 0) std::cout << "nono" << std::endl;
-				shadeResult /= (float)count;
+				shadeResult /= 9.0f;//(float)count;
 				if (count != 0)
 				img->setPixel(i, j, shadeResult);
 			}
